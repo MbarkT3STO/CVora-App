@@ -1,14 +1,12 @@
 import { authService } from '../services/auth.service';
 import { renderLogin } from '../modules/auth/auth.view';
 import { renderDashboard } from '../modules/cv/dashboard.view';
-import { openCVPreview } from '../modules/cv/cv-preview.view';
-import { cvService } from '../services/cv.service';
-import { showToast } from '../components/toast';
+import { api } from '../services/api';
+import type { CV } from '../types';
 
 export async function initRouter(): Promise<void> {
   const path = window.location.pathname;
 
-  // Public CV view route
   if (path.startsWith('/cv/')) {
     const id = path.split('/cv/')[1];
     if (id) {
@@ -24,40 +22,86 @@ export async function initRouter(): Promise<void> {
   }
 }
 
+function getViewerUrl(fileUrl: string): string {
+  return `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+}
+
 async function renderPublicCV(id: string): Promise<void> {
-  document.getElementById('app')!.innerHTML = `
-    <div class="public-cv-page">
-      <div class="neu-card" style="padding:2rem;text-align:center">
-        <i class="fa fa-spinner fa-spin fa-2x"></i>
+  const app = document.getElementById('app')!;
+
+  app.innerHTML = `
+    <div class="public-page">
+      <div class="public-page__loading">
+        <div class="spinner"></div>
         <p>Loading CV...</p>
       </div>
     </div>`;
 
-  const res = await cvService.list();
-  if (!res.success || !res.data) {
-    showToast({ message: 'CV not found', type: 'error' });
-    return;
-  }
+  const res = await api.getPublic<CV>(`cv-public?id=${id}`);
 
-  const cv = res.data.find(c => c.id === id);
-  if (!cv) {
-    document.getElementById('app')!.innerHTML = `
-      <div class="public-cv-page">
-        <div class="neu-card" style="padding:2rem;text-align:center">
-          <i class="fa fa-exclamation-circle fa-2x"></i>
-          <p>CV not found or has been removed.</p>
-          <a href="/" class="btn btn--primary" style="margin-top:1rem">Go Home</a>
+  if (!res.success || !res.data) {
+    app.innerHTML = `
+      <div class="public-page public-page--center">
+        <div class="neu-card public-error">
+          <i class="fa fa-exclamation-circle"></i>
+          <h2>CV not found</h2>
+          <p>This CV may have been removed or the link is invalid.</p>
+          <a href="/" class="btn btn--primary"><i class="fa fa-home"></i> Go Home</a>
         </div>
       </div>`;
     return;
   }
 
-  document.getElementById('app')!.innerHTML = `
-    <nav class="navbar neu-nav">
-      <div class="navbar__brand"><i class="fa fa-file-text-o"></i><span>CVora</span></div>
-      <a href="/" class="btn btn--ghost btn--sm"><i class="fa fa-home"></i> Home</a>
-    </nav>
-    <div id="app-inner"></div>`;
+  const cv = res.data;
+  const viewerUrl = getViewerUrl(cv.fileUrl);
 
-  openCVPreview(cv);
+  app.innerHTML = `
+    <div class="public-page">
+      <div class="public-navbar neu-nav">
+        <div class="navbar__brand">
+          <i class="fa fa-file-text-o"></i>
+          <span>CVora</span>
+        </div>
+        <div class="public-navbar__meta">
+          <span class="public-navbar__title">${escapeHtml(cv.title)}</span>
+        </div>
+        <div class="navbar__actions">
+          <button id="pub-toggle" class="btn btn--ghost btn--sm">
+            <i class="fa fa-refresh"></i> Switch viewer
+          </button>
+          <a href="${cv.fileUrl}" download="${escapeHtml(cv.title)}.pdf" class="btn btn--primary btn--sm">
+            <i class="fa fa-download"></i> Download
+          </a>
+        </div>
+      </div>
+
+      <div class="public-viewer">
+        <div id="pub-loading" class="viewer-loading">
+          <div class="spinner"></div>
+          <p>Loading preview...</p>
+        </div>
+        <iframe
+          id="pub-iframe"
+          src="${viewerUrl}"
+          title="${escapeHtml(cv.title)}"
+          class="public-frame"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>`;
+
+  const iframe = document.getElementById('pub-iframe') as HTMLIFrameElement;
+  const loading = document.getElementById('pub-loading')!;
+  iframe.addEventListener('load', () => loading.style.display = 'none');
+
+  let useGoogle = true;
+  document.getElementById('pub-toggle')?.addEventListener('click', () => {
+    loading.style.display = 'flex';
+    useGoogle = !useGoogle;
+    iframe.src = useGoogle ? viewerUrl : cv.fileUrl;
+  });
+}
+
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }

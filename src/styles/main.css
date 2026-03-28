@@ -313,7 +313,7 @@ img { max-width: 100%; }
   border-radius: var(--radius);
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   width: 100%;
-  max-width: 560px;
+  max-width: 860px;
   max-height: 90vh;
   overflow-y: auto;
   transform: translateY(20px);
@@ -439,4 +439,100 @@ img { max-width: 100%; }
   .navbar__brand span { display: none; }
   .modal__footer { flex-direction: column; }
   .modal__footer .btn { width: 100%; justify-content: center; }
+}
+
+/* ===== PDF Viewer enhancements ===== */
+.pdf-viewer { position: relative; }
+
+.viewer-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  z-index: 2;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.viewer-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+  text-align: center;
+}
+.viewer-hint i { margin-right: 0.25rem; }
+
+/* ===== Public CV Full Page ===== */
+.public-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.public-page--center {
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.public-navbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.public-navbar__meta {
+  flex: 1;
+  overflow: hidden;
+}
+
+.public-navbar__title {
+  font-weight: 600;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.public-viewer {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.public-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.public-error {
+  text-align: center;
+  padding: 3rem 2rem;
+  max-width: 400px;
+}
+
+.public-error i {
+  font-size: 3rem;
+  color: var(--danger);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.public-error h2 { margin-bottom: 0.5rem; }
+.public-error p { color: var(--text-muted); margin-bottom: 1.5rem; }
+
+@media (max-width: 600px) {
+  .public-navbar { flex-wrap: wrap; padding: 0.75rem 1rem; }
+  .public-navbar__meta { order: 3; width: 100%; }
 }

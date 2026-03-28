@@ -5,14 +5,15 @@ const BASE = '/.netlify/functions';
 
 async function request<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  skipAuth = false
 ): Promise<ApiResponse<T>> {
   const token = storage.getToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (token && !skipAuth) headers['Authorization'] = `Bearer ${token}`;
 
   try {
     const res = await fetch(`${BASE}/${endpoint}`, { ...options, headers });
@@ -30,6 +31,9 @@ export const api = {
 
   get: <T>(endpoint: string) =>
     request<T>(endpoint, { method: 'GET' }),
+
+  getPublic: <T>(endpoint: string) =>
+    request<T>(endpoint, { method: 'GET' }, true),
 
   put: <T>(endpoint: string, body: unknown) =>
     request<T>(endpoint, { method: 'PUT', body: JSON.stringify(body) }),
