@@ -54,19 +54,19 @@ export function renderDashboard(): void {
     <div class="app-layout">
       <nav class="navbar neu-nav">
         <div class="navbar__brand">
-          <i class="fa fa-file-text-o"></i>
+          <i class="fa-solid fa-file-lines"></i>
           <span>CVora</span>
         </div>
         <div class="navbar__actions">
-          <button id="theme-toggle" class="btn-icon" aria-label="Toggle dark mode">
-            <i class="fa fa-moon-o"></i>
+          <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+            <i class="fa-solid fa-moon"></i>
           </button>
           <span class="navbar__user">
-            <i class="fa fa-user-circle"></i>
+            <i class="fa-solid fa-circle-user"></i>
             <span id="nav-username">${authService.getUser()}</span>
           </span>
           <button id="logout-btn" class="btn btn--ghost btn--sm">
-            <i class="fa fa-sign-out"></i> Logout
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
           </button>
         </div>
       </nav>
@@ -78,13 +78,13 @@ export function renderDashboard(): void {
             <p class="dashboard-subtitle">Manage and share your resumes</p>
           </div>
           <button id="create-cv-btn" class="btn btn--primary">
-            <i class="fa fa-plus"></i> New CV
+            <i class="fa-solid fa-plus"></i> New CV
           </button>
         </div>
 
         <div class="dashboard-toolbar">
           <div class="search-box">
-            <i class="fa fa-search"></i>
+            <i class="fa-solid fa-magnifying-glass"></i>
             <input id="search-input" type="search" placeholder="Search CVs..." class="form-input" />
           </div>
         </div>
@@ -139,7 +139,7 @@ function renderCVCards(cvs: CV[]): void {
   if (cvs.length === 0) {
     grid.innerHTML = `
       <div class="empty-state">
-        <i class="fa fa-folder-open-o"></i>
+        <i class="fa-regular fa-folder-open"></i>
         <p>No CVs found. Create your first one!</p>
       </div>`;
     return;
@@ -148,27 +148,27 @@ function renderCVCards(cvs: CV[]): void {
   grid.innerHTML = cvs.map(cv => `
     <div class="cv-card neu-card" data-id="${cv.id}">
       <div class="cv-card__icon">
-        <i class="fa fa-file-pdf-o"></i>
+        <i class="fa-solid fa-file-pdf"></i>
       </div>
       <div class="cv-card__body">
         <h3 class="cv-card__title">${escapeHtml(cv.title)}</h3>
         <p class="cv-card__desc">${escapeHtml(cv.description)}</p>
         <span class="cv-card__date">
-          <i class="fa fa-calendar"></i> ${formatDate(cv.createdAt)}
+          <i class="fa-regular fa-calendar"></i> ${formatDate(cv.createdAt)}
         </span>
       </div>
       <div class="cv-card__actions">
         <button class="btn-icon btn--view" data-id="${cv.id}" title="Preview">
-          <i class="fa fa-eye"></i>
+          <i class="fa-solid fa-eye"></i>
         </button>
         <button class="btn-icon btn--edit" data-id="${cv.id}" title="Edit">
-          <i class="fa fa-pencil"></i>
+          <i class="fa-solid fa-pen"></i>
         </button>
         <button class="btn-icon btn--copy" data-id="${cv.id}" title="Copy link">
-          <i class="fa fa-link"></i>
+          <i class="fa-solid fa-link"></i>
         </button>
         <button class="btn-icon btn--delete" data-id="${cv.id}" data-public-id="${cv.publicId}" title="Delete">
-          <i class="fa fa-trash"></i>
+          <i class="fa-solid fa-trash"></i>
         </button>
       </div>
     </div>`).join('');
@@ -217,14 +217,14 @@ function confirmDelete(id: string, publicId: string): void {
     <div class="modal" role="dialog" aria-modal="true">
       <div class="modal__header">
         <h2 class="modal__title">Delete CV</h2>
-        <button class="modal__close btn-icon" aria-label="Close"><i class="fa fa-times"></i></button>
+        <button class="modal__close btn-icon" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal__body">
         <p>Are you sure you want to delete <strong>${escapeHtml(cv.title)}</strong>? This cannot be undone.</p>
         <div class="modal__footer">
           <button id="cancel-delete" class="btn btn--ghost">Cancel</button>
           <button id="confirm-delete" class="btn btn--danger">
-            <i class="fa fa-trash"></i> Delete
+            <i class="fa-solid fa-trash"></i> Delete
           </button>
         </div>
       </div>
@@ -249,11 +249,10 @@ function confirmDelete(id: string, publicId: string): void {
 }
 
 function toggleTheme(): void {
-  document.documentElement.classList.toggle('dark');
+  const isLight = document.documentElement.classList.toggle('light');
   const icon = document.querySelector('#theme-toggle i') as HTMLElement;
-  icon.className = document.documentElement.classList.contains('dark')
-    ? 'fa fa-sun-o' : 'fa fa-moon-o';
-  localStorage.setItem('cvora_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  icon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  localStorage.setItem('cvora_theme', isLight ? 'light' : 'dark');
 }
 
 function escapeHtml(str: string): string {

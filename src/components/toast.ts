@@ -16,8 +16,8 @@ export function showToast({ message, type, duration = 3500 }: ToastOptions): voi
   const toast = document.createElement('div');
   toast.className = `toast toast--${type}`;
 
-  const iconMap = { success: 'check-circle', error: 'times-circle', info: 'info-circle', warning: 'exclamation-triangle' };
-  toast.innerHTML = `<i class="fa fa-${iconMap[type]}"></i><span>${message}</span>`;
+  const iconMap = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
+  toast.innerHTML = `<i class="fa-solid fa-${iconMap[type]}"></i><span>${message}</span>`;
 
   c.appendChild(toast);
   requestAnimationFrame(() => toast.classList.add('toast--visible'));

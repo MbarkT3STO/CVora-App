@@ -43,10 +43,10 @@ async function renderPublicCV(id: string): Promise<void> {
     app.innerHTML = `
       <div class="public-page public-page--center">
         <div class="neu-card public-error">
-          <i class="fa fa-exclamation-circle"></i>
+          <i class="fa-solid fa-circle-exclamation"></i>
           <h2>CV not found</h2>
           <p>This CV may have been removed or the link is invalid.</p>
-          <a href="/" class="btn btn--primary"><i class="fa fa-home"></i> Go Home</a>
+          <a href="/" class="btn btn--primary"><i class="fa-solid fa-house"></i> Go Home</a>
         </div>
       </div>`;
     return;

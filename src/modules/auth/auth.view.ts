@@ -8,7 +8,7 @@ export function renderLogin(): void {
     <div class="auth-page">
       <div class="auth-card neu-card">
         <div class="auth-card__logo">
-          <i class="fa fa-file-text-o"></i>
+          <i class="fa-solid fa-file-lines"></i>
           <span>CVora</span>
         </div>
 
@@ -24,25 +24,25 @@ export function renderLogin(): void {
           <form id="login-form" class="form" novalidate>
             <div class="form-group">
               <label class="form-label" for="login-username">
-                <i class="fa fa-user"></i> Username
+                <i class="fa-solid fa-user"></i> Username
               </label>
               <input id="login-username" name="username" type="text" class="form-input"
                 placeholder="Enter username" autocomplete="username" required />
             </div>
             <div class="form-group">
               <label class="form-label" for="login-password">
-                <i class="fa fa-lock"></i> Password
+                <i class="fa-solid fa-lock"></i> Password
               </label>
               <div class="input-wrapper">
                 <input id="login-password" name="password" type="password" class="form-input"
                   placeholder="Enter password" autocomplete="current-password" required />
                 <button type="button" class="btn-icon input-toggle" id="toggle-login-pw" aria-label="Toggle password">
-                  <i class="fa fa-eye"></i>
+                  <i class="fa-solid fa-eye"></i>
                 </button>
               </div>
             </div>
             <button type="submit" id="login-btn" class="btn btn--primary btn--full">
-              <i class="fa fa-sign-in"></i> Sign In
+              <i class="fa-solid fa-right-to-bracket"></i> Sign In
             </button>
           </form>
           <p class="auth-card__hint">Demo: admin / admin123</p>
@@ -55,32 +55,32 @@ export function renderLogin(): void {
           <form id="register-form" class="form" novalidate>
             <div class="form-group">
               <label class="form-label" for="reg-username">
-                <i class="fa fa-user"></i> Username <span class="required">*</span>
+                <i class="fa-solid fa-user"></i> Username <span class="required">*</span>
               </label>
               <input id="reg-username" name="username" type="text" class="form-input"
                 placeholder="Min. 3 characters" autocomplete="username" required />
             </div>
             <div class="form-group">
               <label class="form-label" for="reg-password">
-                <i class="fa fa-lock"></i> Password <span class="required">*</span>
+                <i class="fa-solid fa-lock"></i> Password <span class="required">*</span>
               </label>
               <div class="input-wrapper">
                 <input id="reg-password" name="password" type="password" class="form-input"
                   placeholder="Min. 6 characters" autocomplete="new-password" required />
                 <button type="button" class="btn-icon input-toggle" id="toggle-reg-pw" aria-label="Toggle password">
-                  <i class="fa fa-eye"></i>
+                  <i class="fa-solid fa-eye"></i>
                 </button>
               </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="reg-confirm">
-                <i class="fa fa-lock"></i> Confirm Password <span class="required">*</span>
+                <i class="fa-solid fa-lock"></i> Confirm Password <span class="required">*</span>
               </label>
               <input id="reg-confirm" name="confirm" type="password" class="form-input"
                 placeholder="Repeat password" autocomplete="new-password" required />
             </div>
             <button type="submit" id="register-btn" class="btn btn--primary btn--full">
-              <i class="fa fa-user-plus"></i> Create Account
+              <i class="fa-solid fa-user-plus"></i> Create Account
             </button>
           </form>
         </div>
@@ -162,10 +162,10 @@ function setupPasswordToggle(btnId: string, inputId: string): void {
     const icon = document.querySelector(`#${btnId} i`) as HTMLElement;
     if (input.type === 'password') {
       input.type = 'text';
-      icon.className = 'fa fa-eye-slash';
+      icon.className = 'fa-solid fa-eye-slash';
     } else {
       input.type = 'password';
-      icon.className = 'fa fa-eye';
+      icon.className = 'fa-solid fa-eye';
     }
   });
 }

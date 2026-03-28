@@ -16,16 +16,16 @@ export function openCVPreview(cv: CV): void {
   const bodyHtml = `
     <div class="preview-toolbar">
       <button id="toggle-viewer" class="btn btn--ghost btn--sm" data-mode="google">
-        <i class="fa fa-refresh"></i> Switch viewer
+        <i class="fa-solid fa-rotate"></i> Switch viewer
       </button>
       <button id="copy-preview-link" class="btn btn--ghost btn--sm">
-        <i class="fa fa-link"></i> Copy link
+        <i class="fa-solid fa-link"></i> Copy link
       </button>
       <a href="${cv.fileUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--ghost btn--sm">
-        <i class="fa fa-external-link"></i> Open file
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open file
       </a>
       <a href="${cv.fileUrl}" download="${cv.title}.pdf" class="btn btn--primary btn--sm">
-        <i class="fa fa-download"></i> Download
+        <i class="fa-solid fa-download"></i> Download
       </a>
     </div>
     <div class="pdf-viewer">

@@ -10,7 +10,7 @@ export function createModal(id: string, title: string, bodyHtml: string): HTMLEl
       <div class="modal__header">
         <h2 id="${id}-title" class="modal__title">${title}</h2>
         <button class="modal__close btn-icon" aria-label="Close modal">
-          <i class="fa fa-times"></i>
+          <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <div class="modal__body">${bodyHtml}</div>

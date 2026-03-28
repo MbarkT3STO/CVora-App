@@ -15,7 +15,7 @@ export function openCVForm(cv: CV | null, onSuccess: () => void): void {
     <form id="cv-form" class="form" novalidate>
       <div class="form-group">
         <label class="form-label" for="cv-title">
-          <i class="fa fa-tag"></i> Title <span class="required">*</span>
+          <i class="fa-solid fa-tag"></i> Title <span class="required">*</span>
         </label>
         <input id="cv-title" type="text" class="form-input"
           placeholder="e.g. Software Engineer Resume"
@@ -23,7 +23,7 @@ export function openCVForm(cv: CV | null, onSuccess: () => void): void {
       </div>
       <div class="form-group">
         <label class="form-label" for="cv-desc">
-          <i class="fa fa-align-left"></i> Description
+          <i class="fa-solid fa-align-left"></i> Description
         </label>
         <textarea id="cv-desc" class="form-input form-textarea"
           placeholder="Brief description of this CV..."
@@ -34,7 +34,7 @@ export function openCVForm(cv: CV | null, onSuccess: () => void): void {
           <i class="fa fa-file-pdf-o"></i> PDF File ${isEdit ? '(leave empty to keep current)' : '<span class="required">*</span>'}
         </label>
         <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Upload PDF">
-          <i class="fa fa-cloud-upload drop-zone__icon"></i>
+          <i class="fa-solid fa-cloud-arrow-up drop-zone__icon"></i>
           <p class="drop-zone__text">Drag & drop PDF here or <span class="link">browse</span></p>
           <p class="drop-zone__hint">Max 10MB · PDF only</p>
           <input id="cv-file" type="file" accept=".pdf,application/pdf" class="drop-zone__input" />
@@ -44,7 +44,7 @@ export function openCVForm(cv: CV | null, onSuccess: () => void): void {
       <div class="modal__footer">
         <button type="button" class="btn btn--ghost" id="cancel-form-btn">Cancel</button>
         <button type="submit" id="submit-cv-btn" class="btn btn--primary">
-          <i class="fa fa-${isEdit ? 'save' : 'plus'}"></i> ${isEdit ? 'Save Changes' : 'Create CV'}
+          <i class="fa-solid fa-${isEdit ? 'floppy-disk' : 'plus'}"></i> ${isEdit ? 'Save Changes' : 'Create CV'}
         </button>
       </div>
     </form>`;
@@ -152,11 +152,11 @@ function handleFile(file: File, input: HTMLInputElement, preview: HTMLElement, d
 
   preview.classList.remove('hidden');
   preview.innerHTML = `
-    <i class="fa fa-file-pdf-o"></i>
+    <i class="fa-solid fa-file-pdf"></i>
     <span>${escapeHtml(file.name)}</span>
     <span class="file-size">${(file.size / 1024).toFixed(1)} KB</span>
     <button type="button" class="btn-icon" id="remove-file" aria-label="Remove file">
-      <i class="fa fa-times"></i>
+      <i class="fa-solid fa-xmark"></i>
     </button>`;
   dropZone.classList.add('drop-zone--has-file');
 
