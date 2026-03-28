@@ -1,5 +1,5 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
-import { getStore } from '@netlify/blobs';
+import { getDeployStore } from '@netlify/blobs';
 import { v2 as cloudinary } from 'cloudinary';
 import { ok, err, respond, verifyToken } from './_utils';
 import type { CVCreatePayload, CV } from '../../src/types';
@@ -39,7 +39,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
       createdAt: new Date().toISOString(),
     };
 
-    const store = getStore('cvs');
+    const store = getDeployStore('cvs');
     await store.setJSON(cv.id, cv);
 
     return ok(cv);
