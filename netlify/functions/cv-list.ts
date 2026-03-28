@@ -1,6 +1,6 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
-import { getDeployStore } from '@netlify/blobs';
 import { ok, err, respond, verifyToken } from './_utils';
+import { getCVStore } from './_blobs';
 import type { CV } from '../../src/types';
 
 export const handler: Handler = async (event: HandlerEvent) => {
@@ -8,7 +8,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
   if (!verifyToken(event.headers['authorization'])) return err('Unauthorized', 401);
 
   try {
-    const store = getDeployStore('cvs');
+    const store = getCVStore();
     const { blobs } = await store.list();
 
     const cvs: CV[] = await Promise.all(

@@ -1,7 +1,7 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
-import { getDeployStore } from '@netlify/blobs';
 import { v2 as cloudinary } from 'cloudinary';
 import { ok, err, respond, verifyToken } from './_utils';
+import { getCVStore } from './_blobs';
 import type { CVUpdatePayload, CV } from '../../src/types';
 
 cloudinary.config({
@@ -19,7 +19,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
     const { id, title, description, fileBase64, fileName } = JSON.parse(event.body || '{}') as CVUpdatePayload;
     if (!id || !title) return err('ID and title are required');
 
-    const store = getDeployStore('cvs');
+    const store = getCVStore();
     const existing = await store.get(id, { type: 'json' }) as CV | null;
     if (!existing) return err('CV not found', 404);
 

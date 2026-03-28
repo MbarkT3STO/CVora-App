@@ -1,7 +1,7 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
-import { getDeployStore } from '@netlify/blobs';
 import { v2 as cloudinary } from 'cloudinary';
 import { ok, err, respond, verifyToken } from './_utils';
+import { getCVStore } from './_blobs';
 
 cloudinary.config({
   cloud_name: process.env['CLOUDINARY_CLOUD_NAME'],
@@ -20,7 +20,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
     await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
 
-    const store = getDeployStore('cvs');
+    const store = getCVStore();
     await store.delete(id);
 
     return ok({ id });

@@ -1,7 +1,7 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
-import { getDeployStore } from '@netlify/blobs';
 import { v2 as cloudinary } from 'cloudinary';
 import { ok, err, respond, verifyToken } from './_utils';
+import { getCVStore } from './_blobs';
 import type { CVCreatePayload, CV } from '../../src/types';
 
 cloudinary.config({
@@ -17,7 +17,6 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
   try {
     const { title, description, fileBase64, fileName } = JSON.parse(event.body || '{}') as CVCreatePayload;
-
     if (!title || !fileBase64) return err('Title and file are required');
 
     const dataUri = `data:application/pdf;base64,${fileBase64}`;
@@ -39,7 +38,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
       createdAt: new Date().toISOString(),
     };
 
-    const store = getDeployStore('cvs');
+    const store = getCVStore();
     await store.setJSON(cv.id, cv);
 
     return ok(cv);
