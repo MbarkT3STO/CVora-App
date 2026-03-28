@@ -12,10 +12,24 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
   try {
     const store = getCVStore();
-    const cv = await store.get(id, { type: 'json' }) as CV | null;
+
+    // id may be passed as "owner/cvId" (from public link) or bare cvId
+    // Try direct key first, then scan by prefix match on the id segment
+    let cv: CV | null = null;
+
+    if (id.includes('/')) {
+      cv = await store.get(id, { type: 'json' }).catch(() => null) as CV | null;
+    } else {
+      // Scan all blobs to find the one matching this id — needed for legacy bare-id links
+      const { blobs } = await store.list();
+      const match = blobs.find(b => b.key.endsWith(`/${id}`) || b.key === id);
+      if (match) {
+        cv = await store.get(match.key, { type: 'json' }).catch(() => null) as CV | null;
+      }
+    }
+
     if (!cv) return err('CV not found', 404);
 
-    // Only expose safe fields — no internal metadata
     return ok({
       id: cv.id,
       title: cv.title,

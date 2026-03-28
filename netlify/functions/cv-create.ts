@@ -1,6 +1,6 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
 import { v2 as cloudinary } from 'cloudinary';
-import { ok, err, respond, verifyToken } from './_utils';
+import { ok, err, respond, getUserFromToken } from './_utils';
 import { getCVStore } from './_blobs';
 import type { CVCreatePayload, CV } from '../../src/types';
 
@@ -12,7 +12,8 @@ cloudinary.config({
 
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod === 'OPTIONS') return respond(204, {});
-  if (!verifyToken(event.headers['authorization'])) return err('Unauthorized', 401);
+  const username = getUserFromToken(event.headers['authorization']);
+  if (!username) return err('Unauthorized', 401);
   if (event.httpMethod !== 'POST') return err('Method not allowed', 405);
 
   try {
@@ -31,6 +32,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
     const cv: CV = {
       id: crypto.randomUUID(),
+      owner: username,
       title,
       description: description || '',
       fileUrl: uploadResult.secure_url,
@@ -39,7 +41,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
     };
 
     const store = getCVStore();
-    await store.setJSON(cv.id, cv);
+    await store.setJSON(`${username}/${cv.id}`, cv);
 
     return ok(cv);
   } catch (e) {

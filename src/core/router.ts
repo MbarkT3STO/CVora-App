@@ -57,24 +57,6 @@ async function renderPublicCV(id: string): Promise<void> {
 
   app.innerHTML = `
     <div class="public-page">
-      <div class="public-navbar neu-nav">
-        <div class="navbar__brand">
-          <i class="fa fa-file-text-o"></i>
-          <span>CVora</span>
-        </div>
-        <div class="public-navbar__meta">
-          <span class="public-navbar__title">${escapeHtml(cv.title)}</span>
-        </div>
-        <div class="navbar__actions">
-          <button id="pub-toggle" class="btn btn--ghost btn--sm">
-            <i class="fa fa-refresh"></i> Switch viewer
-          </button>
-          <a href="${cv.fileUrl}" download="${escapeHtml(cv.title)}.pdf" class="btn btn--primary btn--sm">
-            <i class="fa fa-download"></i> Download
-          </a>
-        </div>
-      </div>
-
       <div class="public-viewer">
         <div id="pub-loading" class="viewer-loading">
           <div class="spinner"></div>
@@ -93,13 +75,6 @@ async function renderPublicCV(id: string): Promise<void> {
   const iframe = document.getElementById('pub-iframe') as HTMLIFrameElement;
   const loading = document.getElementById('pub-loading')!;
   iframe.addEventListener('load', () => loading.style.display = 'none');
-
-  let useGoogle = true;
-  document.getElementById('pub-toggle')?.addEventListener('click', () => {
-    loading.style.display = 'flex';
-    useGoogle = !useGoogle;
-    iframe.src = useGoogle ? viewerUrl : cv.fileUrl;
-  });
 }
 
 function escapeHtml(str: string): string {

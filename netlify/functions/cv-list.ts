@@ -1,15 +1,16 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
-import { ok, err, respond, verifyToken } from './_utils';
+import { ok, err, respond, getUserFromToken } from './_utils';
 import { getCVStore } from './_blobs';
 import type { CV } from '../../src/types';
 
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod === 'OPTIONS') return respond(204, {});
-  if (!verifyToken(event.headers['authorization'])) return err('Unauthorized', 401);
+  const username = getUserFromToken(event.headers['authorization']);
+  if (!username) return err('Unauthorized', 401);
 
   try {
     const store = getCVStore();
-    const { blobs } = await store.list();
+    const { blobs } = await store.list({ prefix: `${username}/` });
 
     const cvs: CV[] = await Promise.all(
       blobs.map(async (b) => {

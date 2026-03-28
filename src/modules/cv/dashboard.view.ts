@@ -6,9 +6,47 @@ import { renderLogin } from '../auth/auth.view';
 import { openCVForm } from './cv-form.view';
 import { openCVPreview } from './cv-preview.view';
 import { formatDate, generatePublicLink, copyToClipboard, debounce } from '../../utils/helpers';
+import { storage } from '../../utils/storage';
 import type { CV } from '../../types';
 
 let allCVs: CV[] = [];
+let sessionTimer: ReturnType<typeof setTimeout> | null = null;
+let sessionWarningTimer: ReturnType<typeof setTimeout> | null = null;
+
+const SESSION_WARNING_BEFORE_MS = 5 * 60 * 1000; // warn 5 min before expiry
+
+function clearSessionTimers(): void {
+  if (sessionTimer) clearTimeout(sessionTimer);
+  if (sessionWarningTimer) clearTimeout(sessionWarningTimer);
+}
+
+function startSessionTimer(): void {
+  clearSessionTimers();
+  const expiresAt = storage.getExpiresAt();
+  if (!expiresAt) return;
+
+  const msLeft = expiresAt - Date.now();
+  if (msLeft <= 0) {
+    handleSessionExpired();
+    return;
+  }
+
+  const warnAt = msLeft - SESSION_WARNING_BEFORE_MS;
+  if (warnAt > 0) {
+    sessionWarningTimer = setTimeout(() => {
+      showToast({ message: 'Your session expires in 5 minutes', type: 'warning', duration: 6000 });
+    }, warnAt);
+  }
+
+  sessionTimer = setTimeout(handleSessionExpired, msLeft);
+}
+
+function handleSessionExpired(): void {
+  clearSessionTimers();
+  authService.logout();
+  showToast({ message: 'Your session has expired. Please sign in again.', type: 'info', duration: 5000 });
+  renderLogin();
+}
 
 export function renderDashboard(): void {
   const app = document.getElementById('app')!;
@@ -56,6 +94,7 @@ export function renderDashboard(): void {
     </div>`;
 
   document.getElementById('logout-btn')?.addEventListener('click', () => {
+    clearSessionTimers();
     authService.logout();
     renderLogin();
   });
@@ -65,6 +104,8 @@ export function renderDashboard(): void {
   });
 
   document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+
+  startSessionTimer();
 
   const searchInput = document.getElementById('search-input') as HTMLInputElement;
   searchInput.addEventListener('input', debounce(() => {

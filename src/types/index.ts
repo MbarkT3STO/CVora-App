@@ -1,5 +1,6 @@
 export interface CV {
   id: string;
+  owner: string;
   title: string;
   description: string;
   fileUrl: string;
@@ -31,6 +32,7 @@ export interface AuthPayload {
 export interface AuthResponse {
   token: string;
   username: string;
+  expiresAt?: number;
 }
 
 export interface ApiResponse<T = unknown> {

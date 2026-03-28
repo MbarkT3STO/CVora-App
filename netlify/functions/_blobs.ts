@@ -5,7 +5,7 @@ import { resolve } from 'path';
 // Load .env from project root (needed for local netlify dev)
 config({ path: resolve(__dirname, '../../.env') });
 
-export function getCVStore() {
+function getNetlifyStore(name: string) {
   const siteID = process.env['NETLIFY_SITE_ID'];
   const token = process.env['NETLIFY_TOKEN'] || process.env['NETLIFY_AUTH_TOKEN'];
 
@@ -15,5 +15,13 @@ export function getCVStore() {
     );
   }
 
-  return getStore({ name: 'cvs', siteID, token });
+  return getStore({ name, siteID, token });
+}
+
+export function getCVStore() {
+  return getNetlifyStore('cvs');
+}
+
+export function getUserStore() {
+  return getNetlifyStore('users');
 }

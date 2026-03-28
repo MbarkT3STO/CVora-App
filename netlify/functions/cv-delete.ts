@@ -1,7 +1,8 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
 import { v2 as cloudinary } from 'cloudinary';
-import { ok, err, respond, verifyToken } from './_utils';
+import { ok, err, respond, getUserFromToken } from './_utils';
 import { getCVStore } from './_blobs';
+import type { CV } from '../../src/types';
 
 cloudinary.config({
   cloud_name: process.env['CLOUDINARY_CLOUD_NAME'],
@@ -11,17 +12,21 @@ cloudinary.config({
 
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod === 'OPTIONS') return respond(204, {});
-  if (!verifyToken(event.headers['authorization'])) return err('Unauthorized', 401);
+  const username = getUserFromToken(event.headers['authorization']);
+  if (!username) return err('Unauthorized', 401);
   if (event.httpMethod !== 'DELETE') return err('Method not allowed', 405);
 
   try {
     const { id, publicId } = JSON.parse(event.body || '{}') as { id: string; publicId: string };
     if (!id || !publicId) return err('ID and publicId are required');
 
-    await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
-
     const store = getCVStore();
-    await store.delete(id);
+    const existing = await store.get(`${username}/${id}`, { type: 'json' }) as CV | null;
+    if (!existing) return err('CV not found', 404);
+    if (existing.owner !== username) return err('Forbidden', 403);
+
+    await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
+    await store.delete(`${username}/${id}`);
 
     return ok({ id });
   } catch (e) {
