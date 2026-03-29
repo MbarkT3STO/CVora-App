@@ -86,7 +86,7 @@ async function renderPublicCV(id: string): Promise<void> {
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Downloading...';
         try {
-          const res = await fetch(data.fileUrl);
+          const res = await fetch(data.fileUrl as string);
           const blob = await res.blob();
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -114,10 +114,11 @@ function showError(app: HTMLElement): void {
   app.innerHTML = `
     <div class="public-page public-page--center">
       <div class="public-error">
-        <i class="fa-solid fa-circle-exclamation"></i>
-        <h2>CV not found</h2>
-        <p>This CV may have been removed or the link is invalid.</p>
-        <a href="/" class="btn btn--primary"><i class="fa-solid fa-house"></i> Go Home</a>
+        <div class="public-error__404">404</div>
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <h2>CV Not Found</h2>
+        <p>The CV you're looking for was either moved, deleted, or the secret URL is incorrect.</p>
+        <a href="/" class="btn btn--primary"><i class="fa-solid fa-house"></i> Return Home</a>
       </div>
     </div>`;
 }
