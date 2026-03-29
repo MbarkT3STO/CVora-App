@@ -546,7 +546,7 @@ async function saveCV(onSuccess: () => void): Promise<void> {
 // ─── Client-side HTML builder ─────────────────────────────────────────────────
 function buildHtml(d: CVBuiltData, t: CVTemplate, a: string): string {
   const gf = `<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>`;
-  const base = `*{box-sizing:border-box;margin:0;padding:0;min-width:0}html,body{overflow:hidden;background:#fff}body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;font-size:12px;word-break:break-word;overflow-wrap:break-word}.page{background:#fff;width:794px;min-height:1123px;height:auto;margin:0;overflow:hidden}`;
+  const base = `*{box-sizing:border-box;margin:0;padding:0;min-width:0}html,body{overflow:hidden;background:#fff}body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;font-size:12px;word-break:break-word;overflow-wrap:break-word}ul,ol{padding-left:1.2rem;margin:.3rem 0}li{margin-bottom:.2rem}p{margin-bottom:.3rem}p:last-child{margin-bottom:0}strong{font-weight:700}.page{background:#fff;width:794px;min-height:1123px;height:auto;margin:0;overflow:hidden}`;
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"/>${gf}<style>${base}${tplCSS(t, a)}</style></head><body><div class="page">${tplBody(d,t)}</div></body></html>`;
 }
 
@@ -580,7 +580,7 @@ function tplCSS(t: CVTemplate, a: string): string {
       .entry-title{font-weight:700;font-size:.75rem;color:#1e293b;word-break:break-word}
       .entry-sub{font-size:.68rem;color:var(--accent);font-weight:600;margin-top:.06rem;word-break:break-word}
       .entry-date{font-size:.62rem;color:#94a3b8;font-weight:600;white-space:nowrap;background:#f1f5f9;padding:.1rem .4rem;border-radius:20px;flex-shrink:0}
-      .entry-desc{font-size:.68rem;color:#64748b;margin-top:.3rem;line-height:1.55;word-break:break-word;overflow-wrap:break-word}`;
+      .entry-desc{font-size:.68rem;color:#64748b;margin-top:.3rem;line-height:1.55;word-break:break-word;overflow-wrap:break-word}` + accentInject(t, a);
   }
 
   if (t === 'minimal') {
@@ -605,7 +605,7 @@ function tplCSS(t: CVTemplate, a: string): string {
       .skill-tags{display:flex;flex-wrap:wrap;gap:.2rem}
       .skill-tag{background:#f1f5f9;color:#475569;padding:.1rem .38rem;border-radius:4px;font-size:.6rem;font-weight:600;word-break:break-word}
       .lang-row{display:flex;justify-content:space-between;gap:.4rem;font-size:.7rem;padding:.28rem 0;border-bottom:1px solid #f1f5f9}
-      .lang-level{color:#64748b;flex-shrink:0}`;
+      .lang-level{color:#64748b;flex-shrink:0}` + accentInject(t, a);
   }
 
   if (t === 'bold') {
@@ -633,7 +633,7 @@ function tplCSS(t: CVTemplate, a: string): string {
       .skill-tags{display:flex;flex-wrap:wrap;gap:.2rem}
       .skill-tag{background:var(--accent-soft);color:var(--accent);padding:.1rem .38rem;border-radius:4px;font-size:.6rem;font-weight:700;word-break:break-word}
       .lang-item{display:flex;justify-content:space-between;gap:.4rem;font-size:.68rem;padding:.25rem 0;border-bottom:1px solid #f3f4f6}
-      .lang-level{color:var(--accent);font-weight:600;flex-shrink:0}`;
+      .lang-level{color:var(--accent);font-weight:600;flex-shrink:0}` + accentInject(t, a);
   }
 
   if (t === 'elegant') {
@@ -661,7 +661,7 @@ function tplCSS(t: CVTemplate, a: string): string {
       .skill-tags{display:flex;flex-wrap:wrap;gap:.25rem}
       .skill-tag{background:#fef3c7;color:var(--accent);padding:.1rem .45rem;border-radius:20px;font-size:.6rem;font-weight:600;word-break:break-word}
       .lang-row{display:flex;justify-content:space-between;gap:.4rem;font-size:.7rem;padding:.28rem 0;border-bottom:1px solid #fef3c7}
-      .lang-level{color:var(--accent);font-style:italic;flex-shrink:0}`;
+      .lang-level{color:var(--accent);font-style:italic;flex-shrink:0}` + accentInject(t, a);
   }
 
   if (t === 'professional') {
@@ -689,12 +689,12 @@ function tplCSS(t: CVTemplate, a: string): string {
       .skill-list{list-style:none;padding:0}.skill-list li{font-size:.68rem;color:#475569;padding:.16rem 0;display:flex;align-items:flex-start;gap:.3rem;word-break:break-word;overflow-wrap:break-word}
       .skill-list li::before{content:"\u2022";color:var(--accent);font-weight:900;flex-shrink:0;margin-top:.1rem}
       .lang-row{display:flex;justify-content:space-between;gap:.4rem;font-size:.7rem;padding:.28rem 0;border-bottom:1px solid #f1f5f9}
-      .lang-level{color:var(--accent);font-weight:600;flex-shrink:0}`;
+      .lang-level{color:var(--accent);font-weight:600;flex-shrink:0}` + accentInject(t, a);
   }
 
   if (t === 'nova') {
     return `:root{--accent:${accent}}
-      .nova-hero{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0c4a6e 100%);padding:2rem 2.25rem 1.5rem;position:relative;overflow:hidden}
+      .nova-hero{background:#1e1b4b;padding:2rem 2.25rem 1.5rem;position:relative;overflow:hidden}
       .nova-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle,hsla(200,80%,50%,.25) 0%,transparent 70%);border-radius:50%}
       .nova-hero::after{content:'';position:absolute;bottom:-40px;left:30%;width:160px;height:160px;background:radial-gradient(circle,hsla(260,80%,50%,.2) 0%,transparent 70%);border-radius:50%}
       .nova-name{font-family:'Outfit',sans-serif;font-size:1.7rem;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1.1;word-break:break-word;position:relative;z-index:1}
@@ -724,10 +724,52 @@ function tplCSS(t: CVTemplate, a: string): string {
       .lang-item{display:flex;justify-content:space-between;align-items:center;gap:.4rem;padding:.28rem 0;border-bottom:1px solid #f1f5f9}
       .lang-item:last-child{border-bottom:none}
       .lang-name{font-size:.64rem;font-weight:700;color:#1e293b}
-      .lang-badge{font-size:.56rem;font-weight:700;color:var(--accent);background:#f0f9ff;border:1px solid #bae6fd;border-radius:20px;padding:.08rem .42rem;flex-shrink:0}`;
+      .lang-badge{font-size:.56rem;font-weight:700;color:var(--accent);background:#f0f9ff;border:1px solid #bae6fd;border-radius:20px;padding:.08rem .42rem;flex-shrink:0}` + accentInject(t, a);
   }
 
   return '';
+}
+
+function accentInject(t: CVTemplate, c: string): string {
+  if (!c) return '';
+  if (t === 'modern')       return `.sidebar{background:${c}}.sidebar .job-title{color:rgba(255,255,255,0.7)}.sidebar-section h3{color:rgba(255,255,255,0.85);border-bottom-color:rgba(255,255,255,0.2)}.skill-group-name{color:rgba(255,255,255,0.9)}.lang-level{color:rgba(255,255,255,0.8)}.summary-text{border-left-color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry-date{background:${c}11;color:${c}}`;
+  if (t === 'minimal')      return `header{border-bottom-color:${c}}.section-title{color:${c}88}`;
+  if (t === 'bold')         return `header{background:${c}}.section-title{color:${c}}.section-title::before{background:${c}}.entry-sub{color:${c}}.skill-tag{background:${c}22;color:${c}}.lang-level{color:${c}}`;
+  if (t === 'elegant')      return `.section-title::before,.section-title::after{background:linear-gradient(to right,transparent,${c})}.entry-sub{color:${c}}.skill-tag{background:${c}22;color:${c}}.lang-level{color:${c}}`;
+  if (t === 'professional') return `.prof-header{border-bottom-color:${c}}.section-title{color:${c};border-bottom-color:${c}33}.section-icon{background:${c}}.entry-sub{color:${c}}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
+  if (t === 'nova')         return `.nova-hero{background:${c}}.nova-title{background:none;-webkit-text-fill-color:rgba(255,255,255,0.85);color:rgba(255,255,255,0.85)}.section-title{color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry::before{background:${c}}.skill-pill{color:${c};border-color:${c}33;background:${c}11}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
+  return '';
+}
+
+function parseMarkdown(text: string): string {
+  if (!text) return '';
+  let html = esc(text);
+  
+  // Bold (**text**) -> handle first
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  // Italic (*text*) -> handle next
+  html = html.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  
+  // Bullets
+  const lines = html.split('\n');
+  let inList = false;
+  const parsed = lines.map(line => {
+    const t = line.trim();
+    const match = t.match(/^[-*]\s+(.+)/) || t.match(/^[-*](.+)/);
+    
+    if (match) {
+      const li = '<li>' + match[1].trim() + '</li>';
+      if (!inList) { inList = true; return '<ul>' + li; }
+      return li;
+    } else {
+      let res = '';
+      if (inList) { inList = false; res += '</ul>'; }
+      if (t) res += '<p>' + t + '</p>';
+      return res;
+    }
+  });
+  if (inList) parsed.push('</ul>');
+  return parsed.join('');
 }
 
 function tplBody(d: CVBuiltData, t: CVTemplate): string {
@@ -736,7 +778,7 @@ function tplBody(d: CVBuiltData, t: CVTemplate): string {
 
   const expItems = d.experience.map(e => {
     const date = `${esc(e.startDate)}${(e.endDate||e.current) ? ` \u2013 ${e.current?'Present':esc(e.endDate)}` : ''}`;
-    const desc = e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : '';
+    const desc = e.description ? `<div class="entry-desc">${parseMarkdown(e.description)}</div>` : '';
     return `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${date}</div></div>${desc}</div>`;
   }).join('');
 
@@ -764,7 +806,7 @@ function tplBody(d: CVBuiltData, t: CVTemplate): string {
       ${d.languages?.length?`<div class="sidebar-section"><h3>Languages</h3>${langRows('lang-item','lang-level')}</div>`:''}
     </div>
     <div class="main">
-      ${d.summary?`<div class="summary-text">${esc(d.summary)}</div>`:''}
+      ${d.summary?`<div class="summary-text">${parseMarkdown(d.summary)}</div>`:''}
       ${d.experience.length?`<div><div class="section-title">Experience</div>${expItems}</div>`:''}
       ${d.education.length?`<div><div class="section-title">Education</div>${eduItems}</div>`:''}
     </div>`;
@@ -774,7 +816,7 @@ function tplBody(d: CVBuiltData, t: CVTemplate): string {
     return `<header><h1>${esc(d.name)}</h1><div class="job-title">${esc(d.title)}</div><div class="contact-row">${contact}</div></header>
     <div class="content">
       <div class="main-col">
-        ${d.summary?`<p class="summary-text">${esc(d.summary)}</p>`:''}
+        ${d.summary?`<div class="summary-text" style="margin-bottom: 1.5rem;">${parseMarkdown(d.summary)}</div>`:''}
         ${d.experience.length?`<div class="section-title">Experience</div>${expItems}`:''}
         ${d.education.length?`<div class="section-title">Education</div>${eduItems}`:''}
       </div>
@@ -797,7 +839,7 @@ function tplBody(d: CVBuiltData, t: CVTemplate): string {
       </div>
     </div>
     <div class="prof-body">
-      ${d.summary?`<div><div class="section-title">${icon('★')} Profil</div><div class="summary-text">${esc(d.summary)}</div></div>`:''}
+      ${d.summary?`<div><div class="section-title">${icon('★')} Profil</div><div class="summary-text">${parseMarkdown(d.summary)}</div></div>`:''}
       ${d.experience.length?`<div><div class="section-title">${icon('▶')} Experience</div>${expItems}</div>`:''}
       ${d.education.length?`<div><div class="section-title">${icon('▶')} Education</div>${eduItems}</div>`:''}
       ${d.skills.length?`<div><div class="section-title">${icon('◆')} Skills</div><div class="skills-grid">${skillsList}</div></div>`:''}
@@ -822,7 +864,7 @@ function tplBody(d: CVBuiltData, t: CVTemplate): string {
     </div>
     <div class="nova-body">
       <div class="nova-main">
-        ${d.summary?`<div><div class="section-title">About</div><div class="nova-summary">${esc(d.summary)}</div></div>`:''}
+        ${d.summary?`<div><div class="section-title">About</div><div class="nova-summary">${parseMarkdown(d.summary)}</div></div>`:''}
         ${d.experience.length?`<div><div class="section-title">Experience</div>${expItems}</div>`:''}
         ${d.education.length?`<div><div class="section-title">Education</div>${eduItems}</div>`:''}
       </div>

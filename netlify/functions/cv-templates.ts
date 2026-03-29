@@ -50,14 +50,42 @@ function esc(s: string): string {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Injects accent color overrides per template
+function parseMarkdown(text: string): string {
+  if (!text) return '';
+  let html = esc(text);
+  
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  
+  const lines = html.split('\n');
+  let inList = false;
+  const parsed = lines.map(line => {
+    const t = line.trim();
+    const match = t.match(/^[-*]\s+(.+)/) || t.match(/^[-*](.+)/);
+    
+    if (match) {
+      const li = '<li>' + match[1].trim() + '</li>';
+      if (!inList) { inList = true; return '<ul>' + li; }
+      return li;
+    } else {
+      let res = '';
+      if (inList) { inList = false; res += '</ul>'; }
+      if (t) res += '<p>' + t + '</p>';
+      return res;
+    }
+  });
+  if (inList) parsed.push('</ul>');
+  return parsed.join('');
+}
+
 function accentInject(t: CVTemplate, c: string): string {
-  if (t === 'modern')       return `.sidebar{background:linear-gradient(170deg,${c}dd,${c})}.sidebar .job-title{color:${c}88}.sidebar-section h3{color:${c}aa}.skill-group-name{color:${c}cc}.lang-level{color:${c}aa}.summary-text{border-left-color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry-date{background:${c}11;color:${c}}`;
+  if (!c) return '';
+  if (t === 'modern')       return `.sidebar{background:${c}}.sidebar .job-title{color:rgba(255,255,255,0.7)}.sidebar-section h3{color:rgba(255,255,255,0.85);border-bottom-color:rgba(255,255,255,0.2)}.skill-group-name{color:rgba(255,255,255,0.9)}.lang-level{color:rgba(255,255,255,0.8)}.summary-text{border-left-color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry-date{background:${c}11;color:${c}}`;
   if (t === 'minimal')      return `header{border-bottom-color:${c}}.section-title{color:${c}88}`;
   if (t === 'bold')         return `header{background:${c}}.section-title{color:${c}}.section-title::before{background:${c}}.entry-sub{color:${c}}.skill-tag{background:${c}22;color:${c}}.lang-level{color:${c}}`;
   if (t === 'elegant')      return `.section-title::before,.section-title::after{background:linear-gradient(to right,transparent,${c})}.entry-sub{color:${c}}.skill-tag{background:${c}22;color:${c}}.lang-level{color:${c}}`;
   if (t === 'professional') return `.prof-header{border-bottom-color:${c}}.section-title{color:${c};border-bottom-color:${c}33}.section-icon{background:${c}}.entry-sub{color:${c}}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
-  if (t === 'nova')         return `.nova-hero{background:linear-gradient(135deg,#0f172a,${c}cc,${c})}.nova-title{background:linear-gradient(90deg,${c},${c}88);-webkit-background-clip:text;background-clip:text}.section-title{color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry::before{background:${c}}.skill-pill{color:${c};border-color:${c}33;background:${c}11}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
+  if (t === 'nova')         return `.nova-hero{background:${c}}.nova-title{background:none;-webkit-text-fill-color:rgba(255,255,255,0.85);color:rgba(255,255,255,0.85)}.section-title{color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry::before{background:${c}}.skill-pill{color:${c};border-color:${c}33;background:${c}11}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
   return '';
 }
 
@@ -66,6 +94,7 @@ const BASE = `
 *{box-sizing:border-box;margin:0;padding:0;min-width:0}
 html{background:#f1f5f9}
 body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;background:#f1f5f9;padding:2rem 1rem;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ul,ol{padding-left:1.2rem;margin:.3rem 0}li{margin-bottom:.2rem}p{margin-bottom:.3rem}p:last-child{margin-bottom:0}strong{font-weight:700}
 .page{background:#fff;width:100%;max-width:794px;margin:0 auto;box-shadow:0 4px 32px rgba(0,0,0,.12);border-radius:4px;overflow:hidden;word-break:break-word;overflow-wrap:break-word;min-height:1123px}
 @media(max-width:860px){body{padding:1rem .5rem}}
 @media(max-width:600px){body{padding:.5rem 0}.page{border-radius:0;box-shadow:none;min-height:auto}}
@@ -255,9 +284,9 @@ function modernBody(d: CVBuiltData): string {
       `<div class="lang-item"><span>${esc(l.language)}</span><span class="lang-level">${esc(l.level)}</span></div>`).join('')}</div>` : ''}
   </div>
   <div class="main">
-    ${d.summary ? `<div class="summary-text">${esc(d.summary)}</div>` : ''}
+    ${d.summary ? `<div class="summary-text">${parseMarkdown(d.summary)}</div>` : ''}
     ${d.experience.length ? `<div><div class="section-title">Experience</div>${d.experience.map(e =>
-      `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${esc(e.startDate)} — ${e.current ? 'Present' : esc(e.endDate)}</div></div>${e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : ''}</div>`
+      `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${esc(e.startDate)} — ${e.current ? 'Present' : esc(e.endDate)}</div></div>${e.description ? `<div class="entry-desc">${parseMarkdown(e.description)}</div>` : ''}</div>`
     ).join('')}</div>` : ''}
     ${d.education.length ? `<div><div class="section-title">Education</div>${d.education.map(e =>
       `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.degree)}${e.field ? ` in ${esc(e.field)}` : ''}</div><div class="entry-sub">${esc(e.institution)}</div></div><div class="entry-date">${esc(e.startDate)} — ${e.current ? 'Present' : esc(e.endDate)}</div></div></div>`
@@ -273,9 +302,9 @@ function minimalBody(d: CVBuiltData): string {
     <div class="contact-row">${[d.email,d.phone,d.location,d.website].filter(Boolean).map(v =>
       `<span class="contact-item">${esc(v!)}</span>`).join('')}</div>
   </header>
-  ${d.summary ? `<p class="summary-text">${esc(d.summary)}</p>` : ''}
+  ${d.summary ? `<div class="summary-text" style="font-size:.875rem;line-height:1.75;margin-bottom:2rem;">${parseMarkdown(d.summary)}</div>` : ''}
   ${d.experience.length ? `<div class="section-title">Experience</div>${d.experience.map(e =>
-    `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><span class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</span></div>${e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : ''}</div>`
+    `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><span class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</span></div>${e.description ? `<div class="entry-desc">${parseMarkdown(e.description)}</div>` : ''}</div>`
   ).join('')}` : ''}
   ${d.education.length ? `<div class="section-title">Education</div>${d.education.map(e =>
     `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.degree)}${e.field ? ` — ${esc(e.field)}` : ''}</div><div class="entry-sub">${esc(e.institution)}</div></div><span class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</span></div></div>`
@@ -297,9 +326,9 @@ function boldBody(d: CVBuiltData): string {
   </header>
   <div class="content">
     <div class="main-col">
-      ${d.summary ? `<p class="summary-text">${esc(d.summary)}</p>` : ''}
+      ${d.summary ? `<div class="summary-text" style="font-size:.875rem;line-height:1.75;margin-bottom:2rem;">${parseMarkdown(d.summary)}</div>` : ''}
       ${d.experience.length ? `<div class="section-title">Experience</div>${d.experience.map(e =>
-        `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</div></div>${e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : ''}</div>`
+        `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</div></div>${e.description ? `<div class="entry-desc">${parseMarkdown(e.description)}</div>` : ''}</div>`
       ).join('')}` : ''}
       ${d.education.length ? `<div class="section-title">Education</div>${d.education.map(e =>
         `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.degree)}${e.field ? ` in ${esc(e.field)}` : ''}</div><div class="entry-sub">${esc(e.institution)}</div></div><div class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</div></div></div>`
@@ -323,9 +352,9 @@ function elegantBody(d: CVBuiltData): string {
     <div class="contact-row">${[d.email,d.phone,d.location,d.website].filter(Boolean).map(v =>
       `<span class="contact-item">${esc(v!)}</span>`).join('')}</div>
   </header>
-  ${d.summary ? `<p class="summary-text">${esc(d.summary)}</p>` : ''}
+  ${d.summary ? `<div class="summary-text" style="font-size:.875rem;line-height:1.8;text-align:center;font-style:italic;margin-bottom:2.5rem;">${parseMarkdown(d.summary)}</div>` : ''}
   ${d.experience.length ? `<div class="section-title">Experience</div>${d.experience.map(e =>
-    `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</div></div>${e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : ''}</div>`
+    `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</div></div>${e.description ? `<div class="entry-desc">${parseMarkdown(e.description)}</div>` : ''}</div>`
   ).join('')}` : ''}
   ${d.education.length ? `<div class="section-title">Education</div>${d.education.map(e =>
     `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.degree)}${e.field ? ` in ${esc(e.field)}` : ''}</div><div class="entry-sub">${esc(e.institution)}</div></div><div class="entry-date">${esc(e.startDate)} – ${e.current ? 'Present' : esc(e.endDate)}</div></div></div>`
@@ -351,9 +380,9 @@ function professionalBody(d: CVBuiltData): string {
     </div>
   </div>
   <div class="prof-body">
-    ${d.summary ? `<div><div class="section-title">${icon('★')} Profil</div><div class="summary-text">${esc(d.summary)}</div></div>` : ''}
+    ${d.summary ? `<div><div class="section-title">${icon('★')} Profil</div><div class="summary-text">${parseMarkdown(d.summary)}</div></div>` : ''}
     ${d.experience.length ? `<div><div class="section-title">${icon('▶')} Expériences Professionnelles</div>${d.experience.map(e =>
-      `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}, <em style="font-weight:400;font-style:italic">${esc(e.company)}</em></div><div class="entry-sub">${e.description ? esc(e.description) : ''}</div></div><div class="entry-date">${esc(e.startDate)}${e.endDate || e.current ? ` – ${e.current ? 'Present' : esc(e.endDate)}` : ''}</div></div></div>`
+      `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}, <em style="font-weight:400;font-style:italic">${esc(e.company)}</em></div><div class="entry-sub">${e.description ? parseMarkdown(e.description) : ''}</div></div><div class="entry-date">${esc(e.startDate)}${e.endDate || e.current ? ` – ${e.current ? 'Present' : esc(e.endDate)}` : ''}</div></div></div>`
     ).join('')}</div>` : ''}
     ${d.education.length ? `<div><div class="section-title">${icon('▶')} Formations</div>${d.education.map(e =>
       `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.degree)}${e.field ? `, ${esc(e.field)}` : ''}</div><div class="entry-sub">${esc(e.institution)}</div></div><div class="entry-date">${esc(e.startDate)}${e.endDate || e.current ? ` – ${e.current ? 'Present' : esc(e.endDate)}` : ''}</div></div></div>`
@@ -368,7 +397,7 @@ function professionalBody(d: CVBuiltData): string {
 
 // ─── Nova CSS ─────────────────────────────────────────────────────────────────
 const novaCSS = `
-.nova-hero{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0c4a6e 100%);padding:2.5rem 2.75rem 2rem;position:relative;overflow:hidden}
+.nova-hero{background:#1e1b4b;padding:2.5rem 2.75rem 2rem;position:relative;overflow:hidden}
 .nova-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(14,165,233,.22) 0%,transparent 70%);border-radius:50%}
 .nova-hero::after{content:'';position:absolute;bottom:-50px;left:25%;width:200px;height:200px;background:radial-gradient(circle,rgba(139,92,246,.18) 0%,transparent 70%);border-radius:50%}
 .nova-name{font-family:'Outfit',sans-serif;font-size:2rem;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1.1;word-break:break-word;position:relative;z-index:1}
@@ -408,7 +437,7 @@ function novaBody(d: CVBuiltData): string {
 
   const expItems = d.experience.map(e => {
     const date = `${esc(e.startDate)}${(e.endDate||e.current) ? ` \u2013 ${e.current?'Present':esc(e.endDate)}` : ''}`;
-    const desc = e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : '';
+    const desc = e.description ? `<div class="entry-desc">${parseMarkdown(e.description)}</div>` : '';
     return `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${date}</div></div>${desc}</div>`;
   }).join('');
 
@@ -434,7 +463,7 @@ function novaBody(d: CVBuiltData): string {
   </div>
   <div class="nova-body">
     <div class="nova-main">
-      ${d.summary ? `<div><div class="section-title">About</div><div class="nova-summary">${esc(d.summary)}</div></div>` : ''}
+      ${d.summary ? `<div><div class="section-title">About</div><div class="nova-summary">${parseMarkdown(d.summary)}</div></div>` : ''}
       ${d.experience.length ? `<div><div class="section-title">Experience</div>${expItems}</div>` : ''}
       ${d.education.length ? `<div><div class="section-title">Education</div>${eduItems}</div>` : ''}
     </div>
