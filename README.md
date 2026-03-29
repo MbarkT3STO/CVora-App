@@ -61,7 +61,7 @@ Choose from our curated collection of high-impact designs:
 ### Installation
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/yourusername/cvora-app.git
+    git clone https://github.com/MbarkT3sto/cvora-app.git
     cd cvora-app
     ```
 
