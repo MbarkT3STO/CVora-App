@@ -11,25 +11,20 @@ export const handler: Handler = async (event: HandlerEvent) => {
   const body = JSON.parse(event.body || '{}');
   const store = getCVStore();
 
-  // PUT = update existing
   if (event.httpMethod === 'PUT') {
-    const { id, title, description, cvData, template } = body as CVBuiltUpdatePayload;
+    const { id, title, description, cvData, template, accentColor } = body as CVBuiltUpdatePayload;
     if (!id || !title || !cvData) return err('id, title and cvData are required');
-
     const existing = await store.get(`${username}/${id}`, { type: 'json' }) as CV | null;
     if (!existing) return err('CV not found', 404);
     if (existing.owner !== username) return err('Forbidden', 403);
-
-    const updated: CV = { ...existing, title, description: description || '', cvData, template, updatedAt: new Date().toISOString() };
+    const updated: CV = { ...existing, title, description: description || '', cvData, template, accentColor, updatedAt: new Date().toISOString() };
     await store.setJSON(`${username}/${id}`, updated);
     return ok(updated);
   }
 
-  // POST = create new
   if (event.httpMethod === 'POST') {
-    const { title, description, cvData, template } = body as CVBuiltCreatePayload;
+    const { title, description, cvData, template, accentColor } = body as CVBuiltCreatePayload;
     if (!title || !cvData) return err('title and cvData are required');
-
     const cv: CV = {
       id: crypto.randomUUID(),
       owner: username,
@@ -38,9 +33,9 @@ export const handler: Handler = async (event: HandlerEvent) => {
       description: description || '',
       cvData,
       template: template || 'modern',
+      accentColor,
       createdAt: new Date().toISOString(),
     };
-
     await store.setJSON(`${username}/${cv.id}`, cv);
     return ok(cv);
   }

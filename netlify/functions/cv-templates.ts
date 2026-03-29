@@ -1,7 +1,8 @@
 import type { CVBuiltData, CVTemplate } from '../../src/types';
 
-export function renderTemplate(data: CVBuiltData, template: CVTemplate, pageTitle: string): string {
+export function renderTemplate(data: CVBuiltData, template: CVTemplate, pageTitle: string, accentColor?: string): string {
   const styles = getStyles(template);
+  const accentOverride = accentColor ? `\n:root{--cv-accent:${accentColor}}` + accentInject(template, accentColor) : '';
   const body = getBody(data, template);
   return `<!DOCTYPE html>
 <html lang="en">
@@ -12,7 +13,7 @@ export function renderTemplate(data: CVBuiltData, template: CVTemplate, pageTitl
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-<style>${styles}${downloadBarCSS}</style>
+<style>${styles}${accentOverride}${downloadBarCSS}</style>
 </head>
 <body>
 ${downloadBar(pageTitle)}
@@ -47,6 +48,17 @@ function downloadBar(title: string): string {
 
 function esc(s: string): string {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Injects accent color overrides per template
+function accentInject(t: CVTemplate, c: string): string {
+  if (t === 'modern')       return `.sidebar{background:linear-gradient(170deg,${c}dd,${c})}.sidebar .job-title{color:${c}88}.sidebar-section h3{color:${c}aa}.skill-group-name{color:${c}cc}.lang-level{color:${c}aa}.summary-text{border-left-color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry-date{background:${c}11;color:${c}}`;
+  if (t === 'minimal')      return `header{border-bottom-color:${c}}.section-title{color:${c}88}`;
+  if (t === 'bold')         return `header{background:${c}}.section-title{color:${c}}.section-title::before{background:${c}}.entry-sub{color:${c}}.skill-tag{background:${c}22;color:${c}}.lang-level{color:${c}}`;
+  if (t === 'elegant')      return `.section-title::before,.section-title::after{background:linear-gradient(to right,transparent,${c})}.entry-sub{color:${c}}.skill-tag{background:${c}22;color:${c}}.lang-level{color:${c}}`;
+  if (t === 'professional') return `.prof-header{border-bottom-color:${c}}.section-title{color:${c};border-bottom-color:${c}33}.section-icon{background:${c}}.entry-sub{color:${c}}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
+  if (t === 'nova')         return `.nova-hero{background:linear-gradient(135deg,#0f172a,${c}cc,${c})}.nova-title{background:linear-gradient(90deg,${c},${c}88);-webkit-background-clip:text;background-clip:text}.section-title{color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry::before{background:${c}}.skill-pill{color:${c};border-color:${c}33;background:${c}11}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
+  return '';
 }
 
 // ─── Shared base ─────────────────────────────────────────────────────────────

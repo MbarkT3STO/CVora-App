@@ -10,6 +10,7 @@ export interface CV {
   // Built CV fields
   cvData?: CVBuiltData;
   template?: CVTemplate;
+  accentColor?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -74,6 +75,7 @@ export interface CVBuiltCreatePayload {
   description: string;
   cvData: CVBuiltData;
   template: CVTemplate;
+  accentColor?: string;
 }
 
 export interface CVBuiltUpdatePayload {
@@ -82,6 +84,7 @@ export interface CVBuiltUpdatePayload {
   description: string;
   cvData: CVBuiltData;
   template: CVTemplate;
+  accentColor?: string;
 }
 
 export interface CVUpdatePayload {

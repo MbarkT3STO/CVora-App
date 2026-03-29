@@ -29,7 +29,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
     // Built CVs — return rendered HTML page
     if (cv.type === 'built' && cv.cvData) {
-      const html = renderTemplate(cv.cvData, cv.template || 'modern', cv.title);
+      const html = renderTemplate(cv.cvData, cv.template || 'modern', cv.title, cv.accentColor);
       return {
         statusCode: 200,
         headers: {
