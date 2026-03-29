@@ -874,24 +874,26 @@ input, textarea, select { font-family: inherit; }
   overflow: auto;
   display: flex;
   align-items: flex-start;
-  justify-content: center;
-  padding: 1.5rem;
+  justify-content: flex-start;
+  padding: 1.5rem 0 1.5rem 0;
   scrollbar-width: thin;
   scrollbar-color: var(--bg-tertiary) transparent;
 }
 .preview-size-wrap {
   display: contents;
 }
+/* Scaler: transform-origin top left, centered via margin */
 .preview-scaler {
   transform: scale(var(--scale, 1));
-  transform-origin: top center;
+  transform-origin: top left;
   width: 794px;
   height: auto;
   flex-shrink: 0;
+  display: block;
 }
 .preview-iframe {
   width: 794px;
-  height: 1123px;
+  height: 600px; /* initial; JS resizes to content */
   border: none;
   border-radius: 2px;
   background: #fff;
@@ -944,8 +946,8 @@ input, textarea, select { font-family: inherit; }
   overflow: auto;
   display: flex;
   align-items: flex-start;
-  justify-content: center;
-  padding: 1.5rem;
+  justify-content: flex-start;
+  padding: 1.5rem 0 1.5rem 0;
   scrollbar-width: thin;
   scrollbar-color: var(--bg-tertiary) transparent;
 }
@@ -954,7 +956,7 @@ input, textarea, select { font-family: inherit; }
 }
 .cv-fullscreen-scaler {
   transform: scale(var(--scale, 1));
-  transform-origin: top center;
+  transform-origin: top left;
   width: 794px;
   height: auto;
   flex-shrink: 0;
