@@ -31,7 +31,7 @@ export function openCVForm(cv: CV | null, onSuccess: () => void): void {
       </div>
       <div class="form-group">
         <label class="form-label">
-          <i class="fa fa-file-pdf-o"></i> PDF File ${isEdit ? '(leave empty to keep current)' : '<span class="required">*</span>'}
+          <i class="fa-solid fa-file-pdf"></i> PDF File ${isEdit ? '(leave empty to keep current)' : '<span class="required">*</span>'}
         </label>
         <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Upload PDF">
           <i class="fa-solid fa-cloud-arrow-up drop-zone__icon"></i>

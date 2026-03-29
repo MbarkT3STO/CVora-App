@@ -17,7 +17,7 @@ export function setButtonLoading(btn: HTMLButtonElement, loading: boolean): void
   if (loading) {
     btn.disabled = true;
     btn.dataset['originalText'] = btn.innerHTML;
-    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Loading...';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
   } else {
     btn.disabled = false;
     btn.innerHTML = btn.dataset['originalText'] || btn.innerHTML;

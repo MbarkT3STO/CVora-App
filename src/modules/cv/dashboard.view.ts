@@ -5,6 +5,7 @@ import { showLoader, hideLoader } from '../../components/loader';
 import { renderLogin } from '../auth/auth.view';
 import { openCVForm } from './cv-form.view';
 import { openCVPreview } from './cv-preview.view';
+import { openCVBuilder } from './cv-builder.view';
 import { formatDate, generatePublicLink, copyToClipboard, debounce } from '../../utils/helpers';
 import { storage } from '../../utils/storage';
 import type { CV } from '../../types';
@@ -52,7 +53,7 @@ export function renderDashboard(): void {
   const app = document.getElementById('app')!;
   app.innerHTML = `
     <div class="app-layout">
-      <nav class="navbar neu-nav">
+      <nav class="navbar">
         <div class="navbar__brand">
           <i class="fa-solid fa-file-lines"></i>
           <span>CVora</span>
@@ -77,9 +78,14 @@ export function renderDashboard(): void {
             <h1 class="dashboard-title">My CVs</h1>
             <p class="dashboard-subtitle">Manage and share your resumes</p>
           </div>
-          <button id="create-cv-btn" class="btn btn--primary">
-            <i class="fa-solid fa-plus"></i> New CV
-          </button>
+          <div class="btn-group">
+            <button id="create-cv-btn" class="btn btn--primary">
+              <i class="fa-solid fa-plus"></i> New CV
+            </button>
+            <button id="build-cv-btn" class="btn btn--ghost btn--sm">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Build CV
+            </button>
+          </div>
         </div>
 
         <div class="dashboard-toolbar">
@@ -103,7 +109,18 @@ export function renderDashboard(): void {
     openCVForm(null, () => loadCVs());
   });
 
+  document.getElementById('build-cv-btn')?.addEventListener('click', () => {
+    openCVBuilder(null, () => loadCVs());
+  });
+
   document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+
+  // Set correct icon on initial render
+  const themeIcon = document.querySelector('#theme-toggle i') as HTMLElement;
+  if (themeIcon) {
+    themeIcon.className = document.documentElement.classList.contains('light')
+      ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  }
 
   startSessionTimer();
 
@@ -146,15 +163,16 @@ function renderCVCards(cvs: CV[]): void {
   }
 
   grid.innerHTML = cvs.map(cv => `
-    <div class="cv-card neu-card" data-id="${cv.id}">
-      <div class="cv-card__icon">
-        <i class="fa-solid fa-file-pdf"></i>
+    <div class="cv-card" data-id="${cv.id}">
+      <div class="cv-card__icon" style="${cv.type === 'built' ? 'background:var(--accent-soft);' : ''}">
+        <i class="fa-solid ${cv.type === 'built' ? 'fa-wand-magic-sparkles' : 'fa-file-pdf'}" style="${cv.type === 'built' ? 'color:var(--accent)' : ''}"></i>
       </div>
       <div class="cv-card__body">
         <h3 class="cv-card__title">${escapeHtml(cv.title)}</h3>
         <p class="cv-card__desc">${escapeHtml(cv.description)}</p>
         <span class="cv-card__date">
           <i class="fa-regular fa-calendar"></i> ${formatDate(cv.createdAt)}
+          ${cv.type === 'built' ? '<span class="cv-badge">Built</span>' : ''}
         </span>
       </div>
       <div class="cv-card__actions">
@@ -167,7 +185,7 @@ function renderCVCards(cvs: CV[]): void {
         <button class="btn-icon btn--copy" data-id="${cv.id}" title="Copy link">
           <i class="fa-solid fa-link"></i>
         </button>
-        <button class="btn-icon btn--delete" data-id="${cv.id}" data-public-id="${cv.publicId}" title="Delete">
+        <button class="btn-icon btn--delete" data-id="${cv.id}" data-public-id="${cv.publicId || ''}" title="Delete">
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
@@ -176,14 +194,24 @@ function renderCVCards(cvs: CV[]): void {
   grid.querySelectorAll('.btn--view').forEach(btn => {
     btn.addEventListener('click', () => {
       const cv = allCVs.find(c => c.id === (btn as HTMLElement).dataset['id']);
-      if (cv) openCVPreview(cv);
+      if (!cv) return;
+      if (cv.type === 'built') {
+        window.open(`/cv/${cv.id}`, '_blank');
+      } else {
+        openCVPreview(cv);
+      }
     });
   });
 
   grid.querySelectorAll('.btn--edit').forEach(btn => {
     btn.addEventListener('click', () => {
       const cv = allCVs.find(c => c.id === (btn as HTMLElement).dataset['id']);
-      if (cv) openCVForm(cv, () => loadCVs());
+      if (!cv) return;
+      if (cv.type === 'built') {
+        openCVBuilder(cv, () => loadCVs());
+      } else {
+        openCVForm(cv, () => loadCVs());
+      }
     });
   });
 

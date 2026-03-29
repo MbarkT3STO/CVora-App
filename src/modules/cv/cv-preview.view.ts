@@ -42,7 +42,7 @@ export function openCVPreview(cv: CV): void {
       ></iframe>
     </div>
     <p class="viewer-hint">
-      <i class="fa fa-info-circle"></i>
+      <i class="fa-solid fa-circle-info"></i>
       If the preview doesn't load, click "Switch viewer" or "Open file".
     </p>`;
 

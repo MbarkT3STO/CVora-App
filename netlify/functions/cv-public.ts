@@ -2,6 +2,7 @@ import type { Handler, HandlerEvent } from '@netlify/functions';
 import { ok, err, respond } from './_utils';
 import { getCVStore } from './_blobs';
 import type { CV } from '../../src/types';
+import { renderTemplate } from './cv-templates.js';
 
 export const handler: Handler = async (event: HandlerEvent) => {
   if (event.httpMethod === 'OPTIONS') return respond(204, {});
@@ -12,15 +13,11 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
   try {
     const store = getCVStore();
-
-    // id may be passed as "owner/cvId" (from public link) or bare cvId
-    // Try direct key first, then scan by prefix match on the id segment
     let cv: CV | null = null;
 
     if (id.includes('/')) {
       cv = await store.get(id, { type: 'json' }).catch(() => null) as CV | null;
     } else {
-      // Scan all blobs to find the one matching this id — needed for legacy bare-id links
       const { blobs } = await store.list();
       const match = blobs.find(b => b.key.endsWith(`/${id}`) || b.key === id);
       if (match) {
@@ -30,8 +27,23 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
     if (!cv) return err('CV not found', 404);
 
+    // Built CVs — return rendered HTML page
+    if (cv.type === 'built' && cv.cvData) {
+      const html = renderTemplate(cv.cvData, cv.template || 'modern', cv.title);
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: html,
+      };
+    }
+
+    // PDF CVs — return JSON with file URL
     return ok({
       id: cv.id,
+      type: cv.type || 'pdf',
       title: cv.title,
       description: cv.description,
       fileUrl: cv.fileUrl,

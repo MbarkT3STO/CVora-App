@@ -693,3 +693,200 @@ input, textarea, select { font-family: inherit; }
   .modal__footer { flex-direction: column; }
   .modal__footer .btn { width: 100%; justify-content: center; }
 }
+
+/* ===== CV Builder ===== */
+.builder-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+.builder-body {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+.builder-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-right: 1px solid rgba(255,255,255,.04);
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-tertiary) transparent;
+}
+.light .builder-panel { border-right-color: rgba(0,0,0,.06); }
+
+.builder-meta { display: flex; flex-direction: column; gap: .75rem; }
+
+.builder-block {
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--nm-out-sm);
+  padding: 1.1rem;
+}
+.builder-block__title {
+  font-size: .72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text-tertiary);
+  margin-bottom: .85rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.builder-block__title i { color: var(--accent); }
+
+/* Template picker */
+.tpl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .6rem;
+}
+.tpl-card {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  padding: .85rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--nm-out-sm);
+  text-align: left;
+  transition: all var(--transition);
+  border: 2px solid transparent;
+}
+.tpl-card:hover { box-shadow: var(--nm-out); transform: translateY(-2px); }
+.tpl-card--active { border-color: var(--accent); box-shadow: var(--nm-in-sm); }
+.tpl-dot { width: 14px; height: 14px; border-radius: 50%; display: block; margin-bottom: .2rem; }
+.tpl-label { font-size: .82rem; font-weight: 800; color: var(--text-primary); }
+.tpl-desc { font-size: .72rem; color: var(--text-tertiary); font-weight: 500; }
+
+/* Section tabs */
+.builder-tabs {
+  display: flex;
+  gap: .3rem;
+  flex-wrap: wrap;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  padding: .35rem;
+  box-shadow: var(--nm-in-sm);
+}
+.builder-tab {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .45rem .75rem;
+  border-radius: var(--radius-sm);
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.builder-tab i { font-size: .8rem; }
+.builder-tab:hover { color: var(--text-primary); }
+.builder-tab--active { background: var(--bg-primary); color: var(--accent); box-shadow: var(--nm-out-sm); }
+
+/* Builder sections */
+.builder-section { display: flex; flex-direction: column; gap: .85rem; }
+
+/* Entry cards (experience, education, etc.) */
+.entry-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--nm-out-sm);
+  overflow: hidden;
+}
+.entry-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem 1rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.light .entry-card__header { border-bottom-color: rgba(0,0,0,.06); }
+.entry-card__title { font-size: .82rem; font-weight: 700; color: var(--text-primary); }
+.entry-card__fields { padding: 1rem; display: flex; flex-direction: column; gap: .75rem; }
+
+/* Preview panel */
+.builder-preview {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+.preview-label {
+  padding: .6rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  flex-shrink: 0;
+}
+.preview-label i { color: var(--accent); }
+.preview-frame-wrap {
+  flex: 1;
+  overflow: auto;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+/* A4 portrait scaler */
+.preview-scaler {
+  /* JS sets --scale via inline style */
+  transform: scale(var(--scale, 1));
+  transform-origin: top center;
+  flex-shrink: 0;
+  width: 794px;
+  height: 1123px;
+  position: relative;
+}
+.preview-iframe {
+  width: 794px;
+  height: 1123px;
+  border: none;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 8px 40px rgba(0,0,0,.5);
+  display: block;
+}
+
+/* CV badge on cards */
+.cv-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .1rem .5rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: var(--radius-full);
+  font-size: .68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-left: .4rem;
+}
+
+/* Dashboard header actions */
+.dashboard-header .btn-group {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .builder-body { grid-template-columns: 1fr; }
+  .builder-preview { display: none; }
+}
+@media (max-width: 768px) {
+  .builder-panel { padding: 1rem; }
+  .tpl-grid { grid-template-columns: 1fr 1fr; }
+}

@@ -6,7 +6,7 @@ import { renderDashboard } from '../cv/dashboard.view';
 export function renderLogin(): void {
   document.getElementById('app')!.innerHTML = `
     <div class="auth-page">
-      <div class="auth-card neu-card">
+      <div class="auth-card">
         <div class="auth-card__logo">
           <i class="fa-solid fa-file-lines"></i>
           <span>CVora</span>
