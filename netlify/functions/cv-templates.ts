@@ -38,6 +38,7 @@ function getStyles(t: CVTemplate): string {
   if (t === 'bold')         return BASE + boldCSS;
   if (t === 'elegant')      return BASE + elegantCSS;
   if (t === 'professional') return BASE + professionalCSS;
+  if (t === 'nova')         return BASE + novaCSS;
   return BASE + modernCSS;
 }
 
@@ -47,6 +48,7 @@ function getBody(d: CVBuiltData, t: CVTemplate): string {
   if (t === 'bold')         return `<div class="page">${boldBody(d)}</div>`;
   if (t === 'elegant')      return `<div class="page">${elegantBody(d)}</div>`;
   if (t === 'professional') return `<div class="page">${professionalBody(d)}</div>`;
+  if (t === 'nova')         return `<div class="page">${novaBody(d)}</div>`;
   return `<div class="page">${modernBody(d)}</div>`;
 }
 
@@ -321,5 +323,84 @@ function professionalBody(d: CVBuiltData): string {
     ).join('')}</div></div>` : ''}
     ${d.languages?.length ? `<div><div class="section-title">${icon('◆')} Langues</div>${d.languages.map(l =>
       `<div class="lang-row"><span>${esc(l.language)}</span><span class="lang-level">${esc(l.level)}</span></div>`).join('')}</div>` : ''}
+  </div>`;
+}
+
+// ─── Nova CSS ─────────────────────────────────────────────────────────────────
+const novaCSS = `
+.nova-hero{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0c4a6e 100%);padding:2.5rem 2.75rem 2rem;position:relative;overflow:hidden}
+.nova-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(14,165,233,.22) 0%,transparent 70%);border-radius:50%}
+.nova-hero::after{content:'';position:absolute;bottom:-50px;left:25%;width:200px;height:200px;background:radial-gradient(circle,rgba(139,92,246,.18) 0%,transparent 70%);border-radius:50%}
+.nova-name{font-family:'Outfit',sans-serif;font-size:2rem;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1.1;word-break:break-word;position:relative;z-index:1}
+.nova-title{font-size:.8rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-top:.35rem;background:linear-gradient(90deg,#38bdf8,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;position:relative;z-index:1;word-break:break-word}
+.nova-contact{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.1rem;position:relative;z-index:1}
+.nova-chip{display:inline-flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:.25rem .75rem;font-size:.72rem;color:rgba(255,255,255,.88);font-weight:600;word-break:break-all;overflow-wrap:anywhere}
+.nova-body{display:grid;grid-template-columns:1fr 220px;gap:0}
+.nova-main{padding:2rem 2.25rem;display:flex;flex-direction:column;gap:1.75rem;border-right:1px solid #f1f5f9;min-width:0}
+.nova-side{padding:2rem 1.5rem;background:#fafbff;display:flex;flex-direction:column;gap:1.75rem;min-width:0}
+.nova-summary{font-size:.875rem;color:#475569;line-height:1.75;padding:.9rem 1.1rem;background:linear-gradient(135deg,#f0f9ff,#faf5ff);border-radius:10px;border-left:3px solid #0ea5e9;word-break:break-word;overflow-wrap:break-word}
+.section-title{font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.18em;color:#0ea5e9;margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem}
+.section-title::after{content:'';flex:1;height:1.5px;background:linear-gradient(to right,#bae6fd,transparent)}
+.side-section-title{font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.18em;color:#8b5cf6;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.side-section-title::after{content:'';flex:1;height:1.5px;background:linear-gradient(to right,#ddd6fe,transparent)}
+.entry{margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #f1f5f9;position:relative;padding-left:1rem}
+.entry::before{content:'';position:absolute;left:0;top:.38rem;width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);flex-shrink:0}
+.entry:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.entry-header{display:flex;justify-content:space-between;align-items:flex-start;gap:.75rem;flex-wrap:wrap}
+.entry-left{flex:1;min-width:0;word-break:break-word;overflow-wrap:break-word}
+.entry-title{font-weight:800;font-size:.9rem;color:#0f172a;word-break:break-word}
+.entry-sub{font-size:.78rem;color:#0ea5e9;font-weight:700;margin-top:.08rem;word-break:break-word}
+.entry-date{font-size:.7rem;color:#94a3b8;font-weight:600;flex-shrink:0;white-space:nowrap;background:#f1f5f9;padding:.15rem .5rem;border-radius:20px}
+.entry-desc{font-size:.8rem;color:#64748b;margin-top:.4rem;line-height:1.65;word-break:break-word;overflow-wrap:break-word}
+.skill-group-name{font-size:.7rem;font-weight:800;color:#1e293b;margin-bottom:.35rem;margin-top:.6rem;word-break:break-word}
+.skill-group-name:first-child{margin-top:0}
+.skill-pill{display:inline-flex;background:linear-gradient(135deg,#eff6ff,#faf5ff);border:1px solid #e0e7ff;border-radius:20px;padding:.2rem .6rem;font-size:.68rem;font-weight:700;color:#4f46e5;margin:.15rem .1rem;word-break:break-word}
+.lang-item{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.35rem 0;border-bottom:1px solid #f1f5f9}
+.lang-item:last-child{border-bottom:none}
+.lang-name{font-size:.78rem;font-weight:700;color:#1e293b}
+.lang-badge{font-size:.66rem;font-weight:700;color:#0ea5e9;background:#f0f9ff;border:1px solid #bae6fd;border-radius:20px;padding:.12rem .5rem;flex-shrink:0}
+`;
+
+// ─── Nova body ────────────────────────────────────────────────────────────────
+function novaBody(d: CVBuiltData): string {
+  const chips = [d.email,d.phone,d.location,d.website].filter(Boolean)
+    .map(v => `<span class="nova-chip">${esc(v!)}</span>`).join('');
+
+  const expItems = d.experience.map(e => {
+    const date = `${esc(e.startDate)}${(e.endDate||e.current) ? ` \u2013 ${e.current?'Present':esc(e.endDate)}` : ''}`;
+    const desc = e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : '';
+    return `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${esc(e.role)}</div><div class="entry-sub">${esc(e.company)}</div></div><div class="entry-date">${date}</div></div>${desc}</div>`;
+  }).join('');
+
+  const eduItems = d.education.map(e => {
+    const date = `${esc(e.startDate)}${(e.endDate||e.current) ? ` \u2013 ${e.current?'Present':esc(e.endDate)}` : ''}`;
+    const deg = e.field ? `${esc(e.degree)} in ${esc(e.field)}` : esc(e.degree);
+    return `<div class="entry"><div class="entry-header"><div class="entry-left"><div class="entry-title">${deg}</div><div class="entry-sub">${esc(e.institution)}</div></div><div class="entry-date">${date}</div></div></div>`;
+  }).join('');
+
+  const sideSkills = d.skills.map(g =>
+    `<div class="skill-group-name">${esc(g.category)}</div>${
+      g.skills.split(',').map(s => `<span class="skill-pill">${esc(s.trim())}</span>`).join('')
+    }`).join('');
+
+  const sideLangs = (d.languages||[]).map(l =>
+    `<div class="lang-item"><span class="lang-name">${esc(l.language)}</span><span class="lang-badge">${esc(l.level)}</span></div>`).join('');
+
+  return `
+  <div class="nova-hero">
+    <div class="nova-name">${esc(d.name)}</div>
+    <div class="nova-title">${esc(d.title)}</div>
+    <div class="nova-contact">${chips}</div>
+  </div>
+  <div class="nova-body">
+    <div class="nova-main">
+      ${d.summary ? `<div><div class="section-title">About</div><div class="nova-summary">${esc(d.summary)}</div></div>` : ''}
+      ${d.experience.length ? `<div><div class="section-title">Experience</div>${expItems}</div>` : ''}
+      ${d.education.length ? `<div><div class="section-title">Education</div>${eduItems}</div>` : ''}
+    </div>
+    <div class="nova-side">
+      ${d.skills.length ? `<div><div class="side-section-title">Skills</div>${sideSkills}</div>` : ''}
+      ${d.languages?.length ? `<div><div class="side-section-title">Languages</div>${sideLangs}</div>` : ''}
+    </div>
   </div>`;
 }
