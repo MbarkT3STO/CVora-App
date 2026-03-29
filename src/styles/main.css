@@ -901,6 +901,11 @@ input, textarea, select { font-family: inherit; }
 }
 .light .entry-card__header { background: rgba(0,0,0,.02); border-bottom-color: var(--border); }
 .entry-card__title { font-size: .85rem; font-weight: 800; color: var(--text-primary); letter-spacing: -.02em; }
+.entry-card__title-wrap { display: flex; align-items: center; gap: .5rem; pointer-events: none; }
+.details-icon { font-size: .75rem; color: var(--text-secondary); transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+details[open] .details-icon { transform: rotate(90deg); color: var(--accent); }
+details > summary { list-style: none; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
 .entry-card__fields { padding: 1.25rem; display: flex; flex-direction: column; gap: .85rem; }
 
 /* Preview panel */

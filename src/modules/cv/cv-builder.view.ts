@@ -227,13 +227,17 @@ function bindPersonalFields(): void {
 }
 
 function ecard(id: string, title: string, removeIdx: number, fields: string): string {
-  return `<div class="entry-card" data-id="${id}">
-    <div class="entry-card__header">
-      <span class="entry-card__title">${title || 'Untitled'}</span>
+  // Use HTML5 details/summary for instant responsive collapse
+  return `<details class="entry-card" data-id="${id}" open>
+    <summary class="entry-card__header">
+      <div class="entry-card__title-wrap">
+        <i class="fa-solid fa-chevron-right details-icon"></i>
+        <span class="entry-card__title">${title || 'Untitled'}</span>
+      </div>
       <button class="btn-icon btn--delete entry-remove" data-index="${removeIdx}" title="Remove"><i class="fa-solid fa-trash"></i></button>
-    </div>
+    </summary>
     <div class="entry-card__fields">${fields}</div>
-  </div>`;
+  </details>`;
 }
 function ef(id: string, label: string, value: string, placeholder = ''): string {
   return `<div class="form-group"><label class="form-label">${label}</label>
@@ -543,7 +547,7 @@ async function saveCV(onSuccess: () => void): Promise<void> {
 function buildHtml(d: CVBuiltData, t: CVTemplate, a: string): string {
   const gf = `<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>`;
   const base = `*{box-sizing:border-box;margin:0;padding:0;min-width:0}html,body{overflow:hidden;background:#fff}body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;font-size:12px;word-break:break-word;overflow-wrap:break-word}.page{background:#fff;width:794px;min-height:1123px;height:auto;margin:0;overflow:hidden}`;
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/>${gf}<style>${base}${tplCSS(t, a)}</style></head><body><div class="page">${tplBody(d,t,a)}</div></body></html>`;
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/>${gf}<style>${base}${tplCSS(t, a)}</style></head><body><div class="page">${tplBody(d,t)}</div></body></html>`;
 }
 
 function tplCSS(t: CVTemplate, a: string): string {
@@ -726,7 +730,7 @@ function tplCSS(t: CVTemplate, a: string): string {
   return '';
 }
 
-function tplBody(d: CVBuiltData, t: CVTemplate, a: string): string {
+function tplBody(d: CVBuiltData, t: CVTemplate): string {
   const contact = [d.email,d.phone,d.location,d.website].filter(Boolean)
     .map(v => `<span class="contact-item">${esc(v!)}</span>`).join('');
 

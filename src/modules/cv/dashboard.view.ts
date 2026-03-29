@@ -97,11 +97,11 @@ export function renderDashboard(): void {
             <h1 class="dashboard-title">My CVs</h1>
             <p class="dashboard-subtitle">Manage and share your resumes</p>
           </div>
-          <div class="btn-group">
-            <button id="create-cv-btn" class="btn btn--primary">
-              <i class="fa-solid fa-plus"></i> New CV
+          <div class="btn-group" style="display: flex; gap: .75rem; align-items: center;">
+            <button id="create-cv-btn" class="btn btn--ghost">
+              <i class="fa-solid fa-file-arrow-up"></i> Upload CV
             </button>
-            <button id="build-cv-btn" class="btn btn--ghost btn--sm">
+            <button id="build-cv-btn" class="btn btn--primary">
               <i class="fa-solid fa-wand-magic-sparkles"></i> Build CV
             </button>
           </div>
