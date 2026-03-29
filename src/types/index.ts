@@ -15,7 +15,7 @@ export interface CV {
   updatedAt?: string;
 }
 
-export type CVTemplate = 'modern' | 'minimal' | 'bold' | 'elegant' | 'professional' | 'nova';
+export type CVTemplate = 'modern' | 'minimal' | 'bold' | 'elegant' | 'professional' | 'nova' | 'creative' | 'executive';
 
 export interface CVBuiltData {
   name: string;

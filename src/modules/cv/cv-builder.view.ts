@@ -11,6 +11,8 @@ const TEMPLATES: { id: CVTemplate; label: string; desc: string; color: string }[
   { id: 'elegant',      label: 'Elegant',      desc: 'Serif fonts, gold accents',  color: '#d97706' },
   { id: 'professional', label: 'Professional', desc: 'Blue accent, icon sections', color: '#2563eb' },
   { id: 'nova',         label: 'Nova',         desc: 'Gradient hero, glassmorphic', color: '#0ea5e9' },
+  { id: 'creative',     label: 'Creative',     desc: 'Asymmetric, modern dots',    color: '#ec4899' },
+  { id: 'executive',    label: 'Executive',    desc: 'Formal, double-column',      color: '#475569' },
 ];
 
 let currentTemplate: CVTemplate = 'modern';
@@ -742,6 +744,65 @@ function tplCSS(t: CVTemplate, a: string): string {
       .lang-badge{font-size:.56rem;font-weight:700;color:var(--accent);background:#f0f9ff;border:1px solid #bae6fd;border-radius:20px;padding:.08rem .42rem;flex-shrink:0}` + accentInject(t, a);
   }
 
+  if (t === 'creative') {
+    return `${root}
+      .page{padding:2.5rem 2.5rem;display:flex;flex-direction:column;gap:1.5rem;position:relative}
+      .page::before{content:'';position:absolute;top:0;right:0;width:300px;height:300px;background:radial-gradient(circle at 100% 0, var(--accent-soft), transparent 70%);z-index:0}
+      .header{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;padding-bottom:1.5rem;border-bottom:4px solid var(--accent)}
+      .name-wrap{display:flex;flex-direction:column;gap:.25rem}
+      .name-wrap h1{font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:900;color:#0f172a;line-height:1;letter-spacing:-.03em}
+      .name-wrap .job-title{font-size:.8rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.12em}
+      .contact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem .9rem;font-size:.68rem;color:#475569}
+      .contact-item{display:flex;align-items:center;gap:.35rem}
+      .content-grid{display:grid;grid-template-columns:1fr 200px;gap:2rem;position:relative;z-index:1}
+      .main-col{display:flex;flex-direction:column;gap:1.3rem}
+      .side-col{display:flex;flex-direction:column;gap:1.3rem}
+      .summary-text{font-size:.76rem;color:#475569;line-height:1.7;word-break:break-word}
+      .section-title{font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:900;color:#0f172a;margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem;text-transform:uppercase;letter-spacing:.08em}
+      .section-title::before{content:'';width:8px;height:8px;background:var(--accent);border-radius:2px;flex-shrink:0}
+      .entry{margin-bottom:1rem;position:relative;padding-left:1.2rem}
+      .entry::before{content:'';position:absolute;left:0;top:.4rem;width:2px;height:100%;background:#f1f5f9}
+      .entry:last-child::before{display:none}
+      .entry-dot{position:absolute;left:-3px;top:.35rem;width:8px;height:8px;background:#fff;border:2px solid var(--accent);border-radius:50%}
+      .entry-header{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+      .entry-title{font-weight:800;font-size:.78rem;color:#1e293b}
+      .entry-sub{font-size:.7rem;color:var(--accent);font-weight:700}
+      .entry-date{font-size:.62rem;color:#94a3b8;font-weight:700;background:#f8fafc;padding:.15rem .45rem;border-radius:4px}
+      .entry-desc{font-size:.7rem;color:#475569;margin-top:.4rem;line-height:1.6}
+      .skill-group{margin-bottom:.7rem}
+      .skill-group-name{font-size:.64rem;font-weight:800;color:#1e293b;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.04em}
+      .skill-tags{display:flex;flex-wrap:wrap;gap:.25rem}
+      .skill-tag{background:var(--accent-soft);color:var(--accent);padding:.15rem .45rem;border-radius:6px;font-size:.6rem;font-weight:700}
+      .lang-item{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px dashed #e2e8f0;font-size:.7rem;color:#475569}
+      .lang-level{font-weight:800;color:var(--accent)}` + accentInject(t, a);
+  }
+
+  if (t === 'executive') {
+    return `${root}
+      .page{padding:0;display:flex;flex-direction:column;min-height:1123px}
+      .exec-header{background:#0f172a;color:#fff;padding:2.5rem 3rem;display:flex;justify-content:space-between;align-items:center;border-bottom:6px solid var(--accent)}
+      .exec-name-block h1{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;letter-spacing:-.02em}
+      .exec-name-block .job-title{font-size:.85rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.15em;margin-top:.3rem}
+      .exec-contact-block{display:flex;flex-direction:column;gap:.35rem;text-align:right;font-size:.7rem;color:rgba(255,255,255,0.8)}
+      .exec-body{display:grid;grid-template-columns:1fr 220px;gap:2.5rem;padding:2.5rem 3rem;flex:1}
+      .exec-section{margin-bottom:1.8rem}
+      .section-title{font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:.18em;margin-bottom:1rem;padding-bottom:.4rem;border-bottom:2px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}
+      .section-title::after{content:'';width:40px;height:3px;background:var(--accent)}
+      .summary-text{font-size:.78rem;color:#334155;line-height:1.75;font-weight:500;word-break:break-word}
+      .entry{margin-bottom:1.4rem}
+      .entry-header{display:grid;grid-template-columns:1fr auto;gap:.5rem;margin-bottom:.35rem}
+      .entry-title{font-weight:800;font-size:.8rem;color:#0f172a}
+      .entry-sub{font-size:.72rem;color:var(--accent);font-weight:700;grid-column:1}
+      .entry-date{font-size:.66rem;color:#64748b;font-weight:700;text-align:right}
+      .entry-desc{font-size:.72rem;color:#475569;margin-top:.5rem;line-height:1.65}
+      .exec-skill-group{margin-bottom:.8rem}
+      .skill-group-name{font-size:.62rem;font-weight:900;color:#64748b;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.06em}
+      .skill-tags{display:flex;flex-wrap:wrap;gap:.3rem}
+      .skill-tag{border:1.5px solid #e2e8f0;color:#334155;padding:.15rem .45rem;border-radius:4px;font-size:.58rem;font-weight:700}
+      .lang-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f1f5f9;font-size:.72rem;color:#334155}
+      .lang-level{font-weight:800;color:var(--accent)}` + accentInject(t, a);
+  }
+
   return '';
 }
 
@@ -753,6 +814,8 @@ function accentInject(t: CVTemplate, c: string): string {
   if (t === 'elegant')      return `.section-title::before,.section-title::after{background:linear-gradient(to right,transparent,${c})}.entry-sub{color:${c}}.skill-tag{background:${c}22;color:${c}}.lang-level{color:${c}}`;
   if (t === 'professional') return `.prof-header{border-bottom-color:${c}}.section-title{color:${c};border-bottom-color:${c}33}.section-icon{background:${c}}.entry-sub{color:${c}}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
   if (t === 'nova')         return `.nova-hero{background:${c}}.nova-title{background:none;-webkit-text-fill-color:rgba(255,255,255,0.85);color:rgba(255,255,255,0.85)}.section-title{color:${c}}.section-title::after{background:linear-gradient(to right,${c}44,transparent)}.entry-sub{color:${c}}.entry::before{background:${c}}.skill-pill{color:${c};border-color:${c}33;background:${c}11}.lang-badge{color:${c};border-color:${c}44;background:${c}11}`;
+  if (t === 'creative')     return `.page::before{background:radial-gradient(circle at 100% 0, ${c}22, transparent 70%)}.header{border-bottom-color:${c}}.name-wrap .job-title{color:${c}}.section-title::before{background:${c}}.entry-dot{border-color:${c}}.entry-sub{color:${c}}.skill-tag{background:${c}15;color:${c}}.lang-level{color:${c}}`;
+  if (t === 'executive')    return `.exec-header{border-bottom-color:${c}}.exec-name-block .job-title{color:${c}}.section-title::after{background:${c}}.entry-sub{color:${c}}.lang-level{color:${c}}`;
   return '';
 }
 
@@ -886,6 +949,75 @@ function tplBody(d: CVBuiltData, t: CVTemplate): string {
       <div class="nova-side">
         ${d.skills.length?`<div><div class="side-section-title">Skills</div>${sideSkills}</div>`:''}
         ${d.languages?.length?`<div><div class="side-section-title">Languages</div>${sideLangs}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  if (t === 'creative') {
+    const contactGrid = [
+      d.email ? `<div class="contact-item">✉ ${esc(d.email)}</div>` : '',
+      d.phone ? `<div class="contact-item">✆ ${esc(d.phone)}</div>` : '',
+      d.location ? `<div class="contact-item">⌖ ${esc(d.location)}</div>` : '',
+      d.website ? `<div class="contact-item">⊕ ${esc(d.website)}</div>` : ''
+    ].join('');
+    
+    const creativeExp = d.experience.map(e => {
+      const date = `${esc(e.startDate)}${(e.endDate||e.current) ? ` \u2013 ${e.current?'Present':esc(e.endDate)}` : ''}`;
+      return `<div class="entry"><div class="entry-dot"></div><div class="entry-header"><div class="entry-title">${esc(e.role)}</div><div class="entry-date">${date}</div></div><div class="entry-sub">${esc(e.company)}</div>${e.description?`<div class="entry-desc">${parseMarkdown(e.description)}</div>`:''}</div>`;
+    }).join('');
+
+    const creativeEdu = d.education.map(e => {
+      const date = `${esc(e.startDate)}${(e.endDate||e.current) ? ` \u2013 ${e.current?'Present':esc(e.endDate)}` : ''}`;
+      const deg = e.field ? `${esc(e.degree)} in ${esc(e.field)}` : esc(e.degree);
+      return `<div class="entry"><div class="entry-dot"></div><div class="entry-header"><div class="entry-title">${deg}</div><div class="entry-date">${date}</div></div><div class="entry-sub">${esc(e.institution)}</div></div>`;
+    }).join('');
+
+    return `
+    <div class="header">
+      <div class="name-wrap">
+        <h1>${esc(d.name)}</h1>
+        <div class="job-title">${esc(d.title)}</div>
+      </div>
+      <div class="contact-grid">${contactGrid}</div>
+    </div>
+    <div class="content-grid">
+      <div class="main-col">
+        ${d.summary?`<div><div class="section-title">About Me</div><div class="summary-text">${parseMarkdown(d.summary)}</div></div>`:''}
+        ${d.experience.length?`<div><div class="section-title">Experience</div>${creativeExp}</div>`:''}
+        ${d.education.length?`<div><div class="section-title">Education</div>${creativeEdu}</div>`:''}
+      </div>
+      <div class="side-col">
+        ${d.skills.length?`<div><div class="section-title">Skills</div>${d.skills.map(g=>`<div class="skill-group"><div class="skill-group-name">${esc(g.category)}</div><div class="skill-tags">${tags(g)}</div></div>`).join('')}</div>`:''}
+        ${d.languages?.length?`<div><div class="section-title">Languages</div>${langRows('lang-item', 'lang-level')}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  if (t === 'executive') {
+    const execContact = [
+      d.email ? `<span>✉ ${esc(d.email)}</span>` : '',
+      d.phone ? `<span>✆ ${esc(d.phone)}</span>` : '',
+      d.location ? `<span>⌖ ${esc(d.location)}</span>` : '',
+      d.website ? `<span>⊕ ${esc(d.website)}</span>` : ''
+    ].filter(Boolean).join('');
+
+    return `
+    <div class="exec-header">
+      <div class="exec-name-block">
+        <h1>${esc(d.name)}</h1>
+        <div class="exec-title">${esc(d.title)}</div>
+      </div>
+      <div class="exec-contact-block">${execContact}</div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-main">
+        ${d.summary?`<div class="exec-section"><div class="section-title">Executive Profile</div><div class="summary-text">${parseMarkdown(d.summary)}</div></div>`:''}
+        ${d.experience.length?`<div class="exec-section"><div class="section-title">Professional Experience</div>${expItems}</div>`:''}
+      </div>
+      <div class="exec-side">
+        ${d.education.length?`<div class="exec-section"><div class="section-title">Education</div>${eduItems}</div>`:''}
+        ${d.skills.length?`<div class="exec-section"><div class="section-title">Core Competencies</div>${d.skills.map(g=>`<div class="exec-skill-group"><div class="skill-group-name">${esc(g.category)}</div><div class="skill-tags">${tags(g)}</div></div>`).join('')}</div>`:''}
+        ${d.languages?.length?`<div class="exec-section"><div class="section-title">Languages</div>${langRows('lang-row', 'lang-level')}</div>`:''}
       </div>
     </div>`;
   }
