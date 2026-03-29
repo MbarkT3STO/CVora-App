@@ -872,22 +872,21 @@ input, textarea, select { font-family: inherit; }
 .preview-frame-wrap {
   flex: 1;
   overflow: auto;
-  padding: 1.25rem;
-  /* no flex centering — JS controls layout via the size wrapper */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: var(--bg-tertiary) transparent;
 }
-/* Outer div whose size = scaled A4 — makes scroll work correctly */
 .preview-size-wrap {
-  margin: 0 auto;
-  /* JS sets width/height to 794*scale × 1123*scale */
+  display: contents;
 }
-/* Inner div that does the actual CSS scale from top-left */
 .preview-scaler {
   transform: scale(var(--scale, 1));
-  transform-origin: top left;
+  transform-origin: top center;
   width: 794px;
-  height: 1123px;
+  height: auto;
   flex-shrink: 0;
 }
 .preview-iframe {
@@ -943,18 +942,22 @@ input, textarea, select { font-family: inherit; }
 .cv-fullscreen-body {
   flex: 1;
   overflow: auto;
-  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: var(--bg-tertiary) transparent;
 }
 .cv-fullscreen-size-wrap {
-  margin: 0 auto;
+  display: contents;
 }
 .cv-fullscreen-scaler {
   transform: scale(var(--scale, 1));
-  transform-origin: top left;
+  transform-origin: top center;
   width: 794px;
-  height: 1123px;
+  height: auto;
+  flex-shrink: 0;
 }
 
 /* CV badge on cards */

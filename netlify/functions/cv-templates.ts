@@ -24,11 +24,11 @@ function esc(s: string): string {
 // ─── Shared base ─────────────────────────────────────────────────────────────
 const BASE = `
 *{box-sizing:border-box;margin:0;padding:0}
-html{background:#e5e7eb}
-body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;background:#e5e7eb;min-height:100vh;padding:2rem 1rem;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.page{background:#fff;width:794px;min-height:1123px;margin:0 auto;box-shadow:0 4px 32px rgba(0,0,0,.18);border-radius:2px;overflow:hidden;word-break:break-word;overflow-wrap:break-word}
+html,body{overflow:hidden;background:#e5e7eb}
+body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;padding:2rem 1rem;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{background:#fff;width:794px;height:auto;min-height:auto;margin:0 auto;box-shadow:0 4px 32px rgba(0,0,0,.18);border-radius:2px;overflow:hidden;word-break:break-word;overflow-wrap:break-word}
 *{min-width:0}
-@media print{html,body{background:#fff;padding:0}@page{margin:0;size:A4 portrait}.page{box-shadow:none;width:100%;border-radius:0}}
+@media print{html,body{background:#fff;padding:0;overflow:visible}@page{margin:0;size:A4 portrait}.page{box-shadow:none;width:100%;border-radius:0}}
 @media(max-width:820px){body{padding:.5rem 0}.page{width:100%;border-radius:0;box-shadow:none}}
 `;
 
