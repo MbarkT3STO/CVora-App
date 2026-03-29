@@ -45,7 +45,7 @@ export function renderLogin(): void {
               <i class="fa-solid fa-right-to-bracket"></i> Sign In
             </button>
           </form>
-          <p class="auth-card__hint">Demo: admin / admin123</p>
+          
         </div>
 
         <!-- Register Form -->

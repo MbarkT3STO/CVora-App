@@ -436,13 +436,7 @@ input, textarea, select { font-family: inherit; }
   margin-bottom: 1.75rem;
   opacity: .8;
 }
-.auth-card__hint {
-  text-align: center;
-  font-size: .78rem;
-  color: var(--text-tertiary);
-  margin-top: 1rem;
-  font-weight: 600;
-}
+
 
 /* ===== Auth Tabs ===== */
 .auth-tabs {
