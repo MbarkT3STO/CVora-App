@@ -142,10 +142,24 @@ function builderShell(title: string, desc: string): string {
           <button class="btn btn--primary btn--sm" id="add-lang"><i class="fa-solid fa-plus"></i> Add Language</button></div>
       </div>
       <div class="builder-preview">
-        <div class="preview-label"><i class="fa-solid fa-eye"></i> Live Preview</div>
+        <div class="preview-label">
+          <i class="fa-solid fa-eye"></i> Live Preview
+          <div class="preview-actions">
+            <button class="preview-action-btn" id="zoom-out" title="Zoom out"><i class="fa-solid fa-minus"></i></button>
+            <span class="zoom-level" id="zoom-level">100%</span>
+            <button class="preview-action-btn" id="zoom-in" title="Zoom in"><i class="fa-solid fa-plus"></i></button>
+            <button class="preview-action-btn" id="zoom-reset" title="Fit to screen"><i class="fa-solid fa-expand-arrows-alt"></i></button>
+            <div class="preview-divider"></div>
+            <button class="preview-action-btn preview-action-btn--accent" id="fullscreen-btn" title="Full screen preview">
+              <i class="fa-solid fa-up-right-and-down-left-from-center"></i> Full Screen
+            </button>
+          </div>
+        </div>
         <div class="preview-frame-wrap" id="preview-wrap">
-          <div class="preview-scaler" id="preview-scaler">
-            <iframe id="preview-iframe" class="preview-iframe" title="CV Preview"></iframe>
+          <div class="preview-size-wrap" id="preview-size-wrap">
+            <div class="preview-scaler" id="preview-scaler">
+              <iframe id="preview-iframe" class="preview-iframe" title="CV Preview"></iframe>
+            </div>
           </div>
         </div>
       </div>
@@ -298,26 +312,149 @@ function renderLanguagesList(): void {
 
 function initPreviewScale(): void {
   const wrap = document.getElementById('preview-wrap');
+  const sizeWrap = document.getElementById('preview-size-wrap') as HTMLElement;
   const scaler = document.getElementById('preview-scaler') as HTMLElement;
-  if (!wrap || !scaler) return;
+  if (!wrap || !sizeWrap || !scaler) return;
 
   const A4_W = 794;
   const A4_H = 1123;
+  let manualZoom: number | null = null;
 
-  function applyScale(): void {
-    const availW = wrap.clientWidth - 40; // 2 × 1.25rem padding
-    const availH = wrap.clientHeight - 40;
-    const scaleW = availW / A4_W;
-    const scaleH = availH / A4_H;
-    const scale = Math.min(scaleW, scaleH, 1);
+  function applyScale(zoom?: number): void {
+    const pad = 40;
+    const availW = wrap!.clientWidth - pad;
+    const availH = wrap!.clientHeight - pad;
+    const autoScale = Math.min(availW / A4_W, availH / A4_H, 1);
+    const scale = Math.max(zoom ?? autoScale, 0.1);
+
+    // Set CSS var for transform
     scaler.style.setProperty('--scale', String(scale));
-    // Shrink the wrapper height so scroll works correctly
-    wrap.style.minHeight = `${A4_H * scale + 40}px`;
+    // Set size wrapper to scaled dimensions so scroll container knows the real size
+    sizeWrap.style.width  = `${A4_W * scale}px`;
+    sizeWrap.style.height = `${A4_H * scale}px`;
+
+    const lbl = document.getElementById('zoom-level');
+    if (lbl) lbl.textContent = `${Math.round(scale * 100)}%`;
   }
 
   applyScale();
-  const ro = new ResizeObserver(applyScale);
-  ro.observe(wrap);
+  const ro = new ResizeObserver(() => { if (!manualZoom) applyScale(); });
+  ro.observe(wrap!);
+
+  document.getElementById('zoom-in')?.addEventListener('click', () => {
+    const cur = parseFloat(scaler.style.getPropertyValue('--scale') || '1');
+    manualZoom = Math.min(+(cur + 0.1).toFixed(2), 3);
+    applyScale(manualZoom);
+  });
+  document.getElementById('zoom-out')?.addEventListener('click', () => {
+    const cur = parseFloat(scaler.style.getPropertyValue('--scale') || '1');
+    manualZoom = Math.max(+(cur - 0.1).toFixed(2), 0.2);
+    applyScale(manualZoom);
+  });
+  document.getElementById('zoom-reset')?.addEventListener('click', () => {
+    manualZoom = null;
+    applyScale();
+  });
+
+  document.getElementById('fullscreen-btn')?.addEventListener('click', openFullscreenPreview);
+}
+
+function openFullscreenPreview(): void {
+  const existing = document.getElementById('cv-fullscreen-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'cv-fullscreen-overlay';
+  overlay.className = 'cv-fullscreen-overlay';
+  overlay.innerHTML = `
+    <div class="cv-fullscreen-bar">
+      <span class="cv-fullscreen-title"><i class="fa-solid fa-file-lines"></i> CV Preview</span>
+      <div class="cv-fullscreen-controls">
+        <button class="preview-action-btn" id="fs-zoom-out" title="Zoom out"><i class="fa-solid fa-minus"></i></button>
+        <span class="zoom-level" id="fs-zoom-level">100%</span>
+        <button class="preview-action-btn" id="fs-zoom-in" title="Zoom in"><i class="fa-solid fa-plus"></i></button>
+        <button class="preview-action-btn" id="fs-zoom-fit" title="Fit to screen"><i class="fa-solid fa-expand-arrows-alt"></i></button>
+        <div class="preview-divider"></div>
+        <button class="preview-action-btn preview-action-btn--danger" id="fs-close" title="Close">
+          <i class="fa-solid fa-xmark"></i> Close
+        </button>
+      </div>
+    </div>
+    <div class="cv-fullscreen-body" id="fs-body">
+      <div class="cv-fullscreen-size-wrap" id="fs-size-wrap">
+        <div class="cv-fullscreen-scaler" id="fs-scaler">
+          <iframe id="fs-iframe" class="preview-iframe" title="CV Full Preview"></iframe>
+        </div>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('cv-fullscreen-overlay--visible'));
+
+  // Copy current HTML into the fullscreen iframe
+  const srcIframe = document.getElementById('preview-iframe') as HTMLIFrameElement;
+  const fsIframe = document.getElementById('fs-iframe') as HTMLIFrameElement;
+  const srcDoc = srcIframe?.contentDocument;
+  if (srcDoc) {
+    const fsDoc = fsIframe.contentDocument || fsIframe.contentWindow?.document;
+    if (fsDoc) {
+      fsDoc.open();
+      fsDoc.write(srcDoc.documentElement.outerHTML);
+      fsDoc.close();
+    }
+  }
+
+  const fsBody = document.getElementById('fs-body')!;
+  const fsSizeWrap = document.getElementById('fs-size-wrap') as HTMLElement;
+  const fsScaler = document.getElementById('fs-scaler') as HTMLElement;
+  const A4_W = 794;
+  const A4_H = 1123;
+  let fsManualZoom: number | null = null;
+
+  function applyFsScale(zoom?: number): void {
+    const pad = 64;
+    const availW = fsBody.clientWidth - pad;
+    const availH = fsBody.clientHeight - pad;
+    const autoScale = Math.min(availW / A4_W, availH / A4_H, 1.5);
+    const scale = Math.max(zoom ?? autoScale, 0.1);
+
+    fsScaler.style.setProperty('--scale', String(scale));
+    fsSizeWrap.style.width  = `${A4_W * scale}px`;
+    fsSizeWrap.style.height = `${A4_H * scale}px`;
+
+    const lbl = document.getElementById('fs-zoom-level');
+    if (lbl) lbl.textContent = `${Math.round(scale * 100)}%`;
+  }
+
+  applyFsScale();
+  const ro = new ResizeObserver(() => { if (!fsManualZoom) applyFsScale(); });
+  ro.observe(fsBody);
+
+  document.getElementById('fs-zoom-in')?.addEventListener('click', () => {
+    const cur = parseFloat(fsScaler.style.getPropertyValue('--scale') || '1');
+    fsManualZoom = Math.min(+(cur + 0.15).toFixed(2), 3);
+    applyFsScale(fsManualZoom);
+  });
+  document.getElementById('fs-zoom-out')?.addEventListener('click', () => {
+    const cur = parseFloat(fsScaler.style.getPropertyValue('--scale') || '1');
+    fsManualZoom = Math.max(+(cur - 0.15).toFixed(2), 0.2);
+    applyFsScale(fsManualZoom);
+  });
+  document.getElementById('fs-zoom-fit')?.addEventListener('click', () => {
+    fsManualZoom = null;
+    applyFsScale();
+  });
+
+  const close = () => {
+    ro.disconnect();
+    overlay.classList.remove('cv-fullscreen-overlay--visible');
+    overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
+  };
+  document.getElementById('fs-close')?.addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function onKey(e) {
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); }
+  });
 }
 
 function schedulePreview(): void {

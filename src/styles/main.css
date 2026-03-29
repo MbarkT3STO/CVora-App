@@ -818,7 +818,7 @@ input, textarea, select { font-family: inherit; }
   overflow: hidden;
 }
 .preview-label {
-  padding: .6rem 1.25rem;
+  padding: .5rem 1rem;
   font-size: .72rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -826,29 +826,69 @@ input, textarea, select { font-family: inherit; }
   color: var(--text-tertiary);
   display: flex;
   align-items: center;
-  gap: .4rem;
+  gap: .5rem;
   background: var(--bg-secondary);
   border-bottom: 1px solid rgba(255,255,255,.04);
   flex-shrink: 0;
 }
-.preview-label i { color: var(--accent); }
+.preview-label > i { color: var(--accent); }
+.preview-actions {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  margin-left: auto;
+}
+.preview-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  height: 28px;
+  padding: 0 .6rem;
+  border-radius: var(--radius-sm);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  box-shadow: var(--nm-out-sm);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.preview-action-btn:hover { color: var(--accent); box-shadow: var(--nm-in-sm); }
+.preview-action-btn:active { box-shadow: var(--nm-in); transform: scale(.96); }
+.preview-action-btn--accent { color: var(--accent); }
+.preview-action-btn--accent:hover { color: var(--accent-hover); }
+.preview-action-btn--danger { color: var(--danger); }
+.preview-action-btn--danger:hover { background: rgba(255,59,48,.08); }
+.preview-divider { width: 1px; height: 18px; background: rgba(255,255,255,.08); margin: 0 .2rem; }
+.light .preview-divider { background: rgba(0,0,0,.1); }
+.zoom-level {
+  font-size: .7rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  min-width: 36px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
 .preview-frame-wrap {
   flex: 1;
   overflow: auto;
   padding: 1.25rem;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  /* no flex centering — JS controls layout via the size wrapper */
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-tertiary) transparent;
 }
-/* A4 portrait scaler */
+/* Outer div whose size = scaled A4 — makes scroll work correctly */
+.preview-size-wrap {
+  margin: 0 auto;
+  /* JS sets width/height to 794*scale × 1123*scale */
+}
+/* Inner div that does the actual CSS scale from top-left */
 .preview-scaler {
-  /* JS sets --scale via inline style */
   transform: scale(var(--scale, 1));
-  transform-origin: top center;
-  flex-shrink: 0;
+  transform-origin: top left;
   width: 794px;
   height: 1123px;
-  position: relative;
+  flex-shrink: 0;
 }
 .preview-iframe {
   width: 794px;
@@ -858,6 +898,63 @@ input, textarea, select { font-family: inherit; }
   background: #fff;
   box-shadow: 0 8px 40px rgba(0,0,0,.5);
   display: block;
+}
+
+/* ===== Fullscreen Preview Overlay ===== */
+.cv-fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: hsla(var(--h), 20%, 3%, .92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.cv-fullscreen-overlay--visible { opacity: 1; }
+
+.cv-fullscreen-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .6rem 1.25rem;
+  background: var(--bg-secondary);
+  box-shadow: var(--nm-out-sm);
+  flex-shrink: 0;
+  gap: 1rem;
+}
+.cv-fullscreen-title {
+  font-size: .82rem;
+  font-weight: 800;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  letter-spacing: -.01em;
+}
+.cv-fullscreen-controls {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+.cv-fullscreen-body {
+  flex: 1;
+  overflow: auto;
+  padding: 2rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-tertiary) transparent;
+}
+.cv-fullscreen-size-wrap {
+  margin: 0 auto;
+}
+.cv-fullscreen-scaler {
+  transform: scale(var(--scale, 1));
+  transform-origin: top left;
+  width: 794px;
+  height: 1123px;
 }
 
 /* CV badge on cards */
