@@ -998,3 +998,48 @@ input, textarea, select { font-family: inherit; }
   .builder-panel { padding: 1rem; }
   .tpl-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ===== Public CV Download Bar ===== */
+.cv-dl-bar {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  z-index: 1000;
+  animation: dlBarIn .4s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes dlBarIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cv-dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .65rem 1.25rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition);
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+  white-space: nowrap;
+  text-decoration: none;
+}
+.cv-dl-btn--primary {
+  background: var(--accent);
+  color: #fff;
+}
+.cv-dl-btn--primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(108,99,255,.45);
+}
+.cv-dl-btn:active { transform: scale(.97); }
+@media (max-width: 480px) {
+  .cv-dl-bar { bottom: 1rem; right: 1rem; left: 1rem; justify-content: center; }
+}

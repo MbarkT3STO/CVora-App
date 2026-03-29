@@ -11,10 +11,38 @@ export function renderTemplate(data: CVBuiltData, template: CVTemplate, pageTitl
 <title>${esc(pageTitle)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>
-<style>${styles}</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<style>${styles}${downloadBarCSS}</style>
 </head>
-<body>${body}</body>
+<body>
+${downloadBar(pageTitle)}
+${body}
+<script>
+  document.getElementById('cv-print-btn').addEventListener('click',function(){window.print()});
+</script>
+</body>
 </html>`;
+}
+
+const downloadBarCSS = `
+.cv-dl-bar{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;align-items:center;gap:.5rem;z-index:1000;animation:dlBarIn .4s cubic-bezier(.34,1.4,.64,1)}
+@keyframes dlBarIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.cv-dl-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.25rem;border-radius:999px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;border:none;transition:all .2s ease;box-shadow:0 4px 20px rgba(0,0,0,.18);white-space:nowrap}
+.cv-dl-btn--primary{background:#6c63ff;color:#fff}
+.cv-dl-btn--primary:hover{background:#5a52d5;transform:translateY(-2px);box-shadow:0 6px 24px rgba(108,99,255,.4)}
+.cv-dl-btn--ghost{background:#fff;color:#475569;border:1px solid #e2e8f0}
+.cv-dl-btn--ghost:hover{background:#f8fafc;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.cv-dl-btn:active{transform:scale(.97)}
+@media print{.cv-dl-bar{display:none}}
+@media(max-width:480px){.cv-dl-bar{bottom:1rem;right:1rem;left:1rem;justify-content:center}}
+`;
+
+function downloadBar(title: string): string {
+  return `<div class="cv-dl-bar">
+  <button class="cv-dl-btn cv-dl-btn--primary" id="cv-print-btn">
+    <i class="fa-solid fa-file-arrow-down"></i> Download PDF
+  </button>
+</div>`;
 }
 
 function esc(s: string): string {
