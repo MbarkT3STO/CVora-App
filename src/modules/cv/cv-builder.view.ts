@@ -117,6 +117,12 @@ export function openCVBuilder(cv: CV | null, onSuccess: () => void): void {
 
   document.getElementById('builder-back')?.addEventListener('click', () => { renderDashboard(); onSuccess(); });
   document.getElementById('builder-save')?.addEventListener('click', () => saveCV(onSuccess));
+
+  // Mobile preview FAB
+  document.getElementById('mobile-preview-fab')?.addEventListener('click', () => {
+    schedulePreview();
+    setTimeout(() => openFullscreenPreview(), 100);
+  });
 }
 
 function builderShell(title: string, desc: string): string {
@@ -203,6 +209,9 @@ function builderShell(title: string, desc: string): string {
         </div>
       </div>
     </div>
+    <button id="mobile-preview-fab" class="mobile-preview-fab" title="Preview CV">
+      <i class="fa-solid fa-eye"></i>
+    </button>
   </div>`;
 }
 
@@ -465,7 +474,8 @@ function openFullscreenPreview(): void {
     const autoScale = Math.min(availW / A4_W, availH / A4_H);
     const scale = Math.max(zoom ?? autoScale, 0.1);
     fsScaler.style.setProperty('--scale', String(scale));
-    fsScaler.style.marginLeft = `${(availW - A4_W * scale) / 2 + pad / 2}px`;
+    const centeredMargin = (availW - A4_W * scale) / 2 + pad / 2;
+    fsScaler.style.marginLeft = `${Math.max(centeredMargin, 0)}px`;
     fsScaler.style.marginTop = `${pad / 2}px`;
     fsScaler.style.marginBottom = `${-(A4_H * (1 - scale)) + pad / 2}px`;
     const lbl = overlay.querySelector('#fs-zoom-level') as HTMLElement;

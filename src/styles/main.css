@@ -1148,10 +1148,10 @@ details > summary::-webkit-details-marker { display: none; }
 .cv-fullscreen-body {
   flex: 1;
   overflow: auto;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 1.5rem 0 1.5rem 0;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  display: block;
+  padding: 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: var(--bg-tertiary) transparent;
 }
@@ -1229,6 +1229,39 @@ details > summary::-webkit-details-marker { display: none; }
   .cv-fullscreen-bar { padding: .5rem .85rem; }
   .cv-fullscreen-title { font-size: .75rem; }
   .cv-fullscreen-body { padding: 1rem 0; }
+}
+
+/* ===== Mobile Preview FAB ===== */
+.mobile-preview-fab {
+  display: none;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 150;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), hsl(var(--h), var(--s), 55%));
+  color: #fff;
+  font-size: 1.25rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 28px -4px hsla(var(--h), var(--s), 55%, 0.6);
+  transition: all var(--transition);
+  align-items: center;
+  justify-content: center;
+}
+.mobile-preview-fab:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 36px -4px hsla(var(--h), var(--s), 55%, 0.7);
+}
+.mobile-preview-fab:active { transform: scale(.92); }
+
+@media (max-width: 900px) {
+  .mobile-preview-fab { display: flex; }
+}
+@media (max-width: 480px) {
+  .mobile-preview-fab { width: 50px; height: 50px; font-size: 1.1rem; bottom: 1.25rem; right: 1.25rem; }
 }
 
 /* ===== Public CV Download Bar ===== */
