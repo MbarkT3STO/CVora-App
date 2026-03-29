@@ -973,6 +973,15 @@ input, textarea, select { font-family: inherit; }
   letter-spacing: .08em;
   margin-left: .4rem;
 }
+.cv-updated {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  font-size: .72rem;
+  color: var(--text-tertiary);
+  margin-left: .5rem;
+}
+.cv-updated i { font-size: .65rem; }
 
 /* Dashboard header actions */
 .dashboard-header .btn-group {

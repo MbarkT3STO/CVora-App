@@ -375,6 +375,10 @@ function openFullscreenPreview(): void {
         <button class="preview-action-btn" id="fs-zoom-in" title="Zoom in"><i class="fa-solid fa-plus"></i></button>
         <button class="preview-action-btn" id="fs-zoom-fit" title="Fit to screen"><i class="fa-solid fa-expand-arrows-alt"></i></button>
         <div class="preview-divider"></div>
+        <button class="preview-action-btn preview-action-btn--accent" id="fs-print" title="Download PDF">
+          <i class="fa-solid fa-file-arrow-down"></i> PDF
+        </button>
+        <div class="preview-divider"></div>
         <button class="preview-action-btn preview-action-btn--danger" id="fs-close" title="Close">
           <i class="fa-solid fa-xmark"></i> Close
         </button>
@@ -444,6 +448,10 @@ function openFullscreenPreview(): void {
 
   // Wire controls — use overlay.querySelector to avoid ID conflicts with main preview
   overlay.querySelector('#fs-close')?.addEventListener('click', close);
+  overlay.querySelector('#fs-print')?.addEventListener('click', () => {
+    const fsIframeEl = overlay.querySelector('#fs-iframe') as HTMLIFrameElement;
+    fsIframeEl?.contentWindow?.print();
+  });
   overlay.querySelector('#fs-zoom-in')?.addEventListener('click', () => {
     const cur = parseFloat(fsScaler.style.getPropertyValue('--scale') || '1');
     fsManualZoom = Math.min(+(cur + 0.15).toFixed(2), 3);

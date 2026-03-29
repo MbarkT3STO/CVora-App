@@ -24,10 +24,12 @@ function esc(s: string): string {
 // ─── Shared base ─────────────────────────────────────────────────────────────
 const BASE = `
 *{box-sizing:border-box;margin:0;padding:0;min-width:0}
-html,body{overflow:hidden;background:#fff}
-body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.page{background:#fff;width:794px;min-height:1123px;height:auto;margin:0;overflow:hidden;word-break:break-word;overflow-wrap:break-word}
-@media print{html,body{overflow:visible}@page{margin:0;size:A4 portrait}.page{width:100%;min-height:1123px}}
+html{background:#f1f5f9}
+body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;background:#f1f5f9;padding:2rem 1rem;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{background:#fff;width:100%;max-width:794px;margin:0 auto;box-shadow:0 4px 32px rgba(0,0,0,.12);border-radius:4px;overflow:hidden;word-break:break-word;overflow-wrap:break-word;min-height:1123px}
+@media(max-width:860px){body{padding:1rem .5rem}}
+@media(max-width:600px){body{padding:.5rem 0}.page{border-radius:0;box-shadow:none;min-height:auto}}
+@media print{html,body{background:#fff;padding:0}@page{margin:0;size:A4 portrait}.page{box-shadow:none;max-width:100%;border-radius:0;min-height:1123px}}
 `;
 
 function getStyles(t: CVTemplate): string {

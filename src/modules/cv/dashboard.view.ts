@@ -15,6 +15,7 @@ let sessionTimer: ReturnType<typeof setTimeout> | null = null;
 let sessionWarningTimer: ReturnType<typeof setTimeout> | null = null;
 
 const SESSION_WARNING_BEFORE_MS = 5 * 60 * 1000; // warn 5 min before expiry
+const SESSION_REFRESH_BEFORE_MS = 10 * 60 * 1000; // refresh 10 min before expiry
 
 function clearSessionTimers(): void {
   if (sessionTimer) clearTimeout(sessionTimer);
@@ -32,14 +33,32 @@ function startSessionTimer(): void {
     return;
   }
 
-  const warnAt = msLeft - SESSION_WARNING_BEFORE_MS;
-  if (warnAt > 0) {
-    sessionWarningTimer = setTimeout(() => {
-      showToast({ message: 'Your session expires in 5 minutes', type: 'warning', duration: 6000 });
-    }, warnAt);
+  // Try silent refresh 10 min before expiry
+  const refreshAt = msLeft - SESSION_REFRESH_BEFORE_MS;
+  if (refreshAt > 0) {
+    sessionWarningTimer = setTimeout(async () => {
+      const ok = await authService.refreshToken();
+      if (ok) {
+        // Restart timer with new expiry
+        startSessionTimer();
+      } else {
+        // Refresh failed — warn user
+        showToast({ message: 'Your session expires in 5 minutes', type: 'warning', duration: 6000 });
+        sessionTimer = setTimeout(handleSessionExpired, SESSION_WARNING_BEFORE_MS);
+      }
+    }, refreshAt);
+  } else {
+    // Less than 10 min left — try refresh immediately
+    authService.refreshToken().then(ok => {
+      if (ok) {
+        startSessionTimer();
+      } else if (msLeft > 0) {
+        sessionTimer = setTimeout(handleSessionExpired, msLeft);
+      } else {
+        handleSessionExpired();
+      }
+    });
   }
-
-  sessionTimer = setTimeout(handleSessionExpired, msLeft);
 }
 
 function handleSessionExpired(): void {
@@ -172,6 +191,7 @@ function renderCVCards(cvs: CV[]): void {
         <p class="cv-card__desc">${escapeHtml(cv.description)}</p>
         <span class="cv-card__date">
           <i class="fa-regular fa-calendar"></i> ${formatDate(cv.createdAt)}
+          ${cv.updatedAt ? `<span class="cv-updated"><i class="fa-solid fa-pen-to-square"></i> ${formatDate(cv.updatedAt)}</span>` : ''}
           ${cv.type === 'built' ? '<span class="cv-badge">Built</span>' : ''}
         </span>
       </div>
@@ -182,6 +202,7 @@ function renderCVCards(cvs: CV[]): void {
         <button class="btn-icon btn--edit" data-id="${cv.id}" title="Edit">
           <i class="fa-solid fa-pen"></i>
         </button>
+        ${cv.type === 'built' ? `<button class="btn-icon btn--download" data-id="${cv.id}" title="Download PDF"><i class="fa-solid fa-file-arrow-down"></i></button>` : ''}
         <button class="btn-icon btn--copy" data-id="${cv.id}" title="Copy link">
           <i class="fa-solid fa-link"></i>
         </button>
@@ -211,6 +232,18 @@ function renderCVCards(cvs: CV[]): void {
         openCVBuilder(cv, () => loadCVs());
       } else {
         openCVForm(cv, () => loadCVs());
+      }
+    });
+  });
+
+  grid.querySelectorAll('.btn--download').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = (btn as HTMLElement).dataset['id']!;
+      const win = window.open(`/cv/${id}`, '_blank');
+      if (win) {
+        win.addEventListener('load', () => {
+          setTimeout(() => win.print(), 500);
+        });
       }
     });
   });

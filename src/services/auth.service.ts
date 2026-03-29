@@ -23,6 +23,16 @@ export const authService = {
     return { success: res.success, error: res.error };
   },
 
+  async refreshToken(): Promise<boolean> {
+    const res = await api.post<AuthResponse>('auth', { action: 'refresh' });
+    if (res.success && res.data) {
+      storage.setToken(res.data.token);
+      if (res.data.expiresAt) storage.setExpiresAt(res.data.expiresAt);
+      return true;
+    }
+    return false;
+  },
+
   logout() {
     storage.clear();
   },
