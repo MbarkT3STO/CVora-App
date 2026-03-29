@@ -35,6 +35,7 @@
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-xl: 28px;
+  --radius-2xl: 32px;
   --radius-full: 9999px;
 
   --transition: .25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -42,6 +43,9 @@
 
   --font-body:    'Inter', system-ui, sans-serif;
   --font-heading: 'Outfit', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+
+  --bg-card: var(--bg-secondary);
 }
 
 /* Light theme */
@@ -93,6 +97,14 @@ a { color: inherit; text-decoration: none; }
 button { cursor: pointer; font-family: inherit; border: none; background: none; }
 input, textarea, select { font-family: inherit; }
 .hidden { display: none !important; }
+
+/* Touch-friendly focus outlines */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Safe area for iOS */
+@supports(padding: max(0px)) {
+  body { padding-bottom: env(safe-area-inset-bottom, 0); }
+}
 
 /* ===== Scrollbar ===== */
 ::-webkit-scrollbar { width: 6px; }
@@ -757,23 +769,64 @@ input, textarea, select { font-family: inherit; }
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .main-content { padding: 1.25rem 1rem; }
-  .navbar { padding: 0 1rem; }
+  .navbar { padding: 0 1rem; height: 60px; }
+  .navbar__brand { font-size: 1.2rem; }
+  .navbar__brand i { font-size: 1.25rem; }
   .navbar__user span { display: none; }
-  .dashboard-header { flex-direction: column; align-items: stretch; }
-  .dashboard-header .btn { width: 100%; justify-content: center; }
+  .navbar__user { padding: .35rem .65rem; }
+  .dashboard-header { flex-direction: column; align-items: stretch; gap: .75rem; }
+  .dashboard-header .btn-group { width: 100%; }
+  .dashboard-header .btn-group .btn { flex: 1; justify-content: center; }
   .search-box { max-width: 100%; }
-  .cv-grid { grid-template-columns: 1fr; }
-  .modal { max-width: 100%; border-radius: var(--radius-xl) var(--radius-xl) 0 0; position: fixed; bottom: 0; margin: 0; }
+  .cv-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .cv-card { padding: 1.25rem; }
+  .cv-card__icon { width: 44px; height: 44px; font-size: 1.2rem; }
+  .cv-card__actions { flex-wrap: wrap; }
+  .cv-card__actions .btn--sm { flex: 1; min-width: 0; justify-content: center; }
+  .modal { max-width: 100%; border-radius: var(--radius-xl) var(--radius-xl) 0 0; position: fixed; bottom: 0; margin: 0; max-height: 85vh; }
   .modal-backdrop { align-items: flex-end; }
+  .modal__header { padding: 1rem 1.25rem; }
+  .modal__body { padding: 1.25rem; }
   .pdf-frame { height: 50vh; }
-  .auth-card { padding: 1.75rem; }
+  .auth-card { padding: 1.75rem 1.25rem; border-radius: var(--radius-lg); }
+  .auth-card__title { font-size: 1.5rem; }
   .toast-container { left: 1rem; right: 1rem; transform: none; top: 4.5rem; }
-  .toast { min-width: unset; max-width: 100%; width: 100%; }
+  .toast { min-width: unset; max-width: 100%; width: 100%; font-size: .82rem; padding: .75rem 1.25rem; }
+  .drop-zone { padding: 1.5rem 1rem; }
+  .drop-zone__icon { font-size: 1.75rem; }
+  .public-error { padding: 3rem 1.5rem; max-width: 100%; }
+  .public-error__404 { font-size: 4.5rem; }
+  .public-error h2 { font-size: 1.5rem; }
+  .public-error p { font-size: 1rem; margin-bottom: 2rem; }
+  .empty-state { padding: 3rem 1.5rem; }
+  .empty-state i { width: 80px; height: 80px; font-size: 2.5rem; }
+  .btn { height: 44px; font-size: .85rem; }
+  .btn--sm { height: 38px; }
+  .btn-icon { width: 40px; height: 40px; font-size: .9rem; }
 }
+
 @media (max-width: 480px) {
+  .navbar { height: 56px; }
   .navbar__brand span { display: none; }
+  .navbar__actions { gap: .4rem; }
+  .btn-icon { width: 38px; height: 38px; }
   .modal__footer { flex-direction: column; }
   .modal__footer .btn { width: 100%; justify-content: center; }
+  .dashboard-title { font-size: 1.6rem; }
+  .dashboard-subtitle { font-size: .75rem; }
+  .cv-card__title { font-size: .95rem; }
+  .form-input { padding: .75rem 1rem; font-size: .85rem; }
+  .color-picker-group { flex-wrap: wrap; gap: .5rem; }
+  .color-presets { gap: .35rem; }
+  .color-preset { width: 22px; height: 22px; }
+  .tpl-grid { grid-template-columns: 1fr; }
+  .auth-card { margin: 0 .5rem; padding: 1.5rem 1rem; }
+  .auth-card__logo { font-size: 1.35rem; }
+  .public-error__404 { font-size: 3.5rem; }
+  .public-error > i { font-size: 2.5rem; margin-bottom: 1rem; }
+  .public-error h2 { font-size: 1.25rem; }
+  .public-error p { font-size: .9rem; }
+  .public-error .btn { padding: .75rem 2rem; font-size: .9rem; }
 }
 
 /* ===== CV Builder ===== */
@@ -1144,10 +1197,38 @@ details > summary::-webkit-details-marker { display: none; }
 @media (max-width: 900px) {
   .builder-body { grid-template-columns: 1fr; }
   .builder-preview { display: none; }
+  .builder-panel { border-right: none; }
 }
 @media (max-width: 768px) {
-  .builder-panel { padding: 1rem; }
-  .tpl-grid { grid-template-columns: 1fr 1fr; }
+  .builder-panel { padding: 1rem; gap: 1rem; }
+  .builder-block { padding: .85rem; }
+  .builder-block__title { font-size: .68rem; margin-bottom: .65rem; }
+  .tpl-grid { grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .tpl-card { padding: .65rem; }
+  .tpl-label { font-size: .78rem; }
+  .builder-tabs { gap: .2rem; padding: .25rem; }
+  .builder-tab { padding: .4rem .65rem; font-size: .7rem; }
+  .entry-card__header { padding: .7rem 1rem; }
+  .entry-card__fields { padding: 1rem; gap: .75rem; }
+  .preview-label { padding: .4rem .85rem; font-size: .68rem; }
+  .navbar { height: 56px; }
+}
+@media (max-width: 480px) {
+  .builder-panel { padding: .75rem; }
+  .tpl-grid { grid-template-columns: 1fr; }
+  .builder-tabs { flex-direction: column; }
+  .builder-tab { justify-content: center; }
+  .entry-card__header { padding: .6rem .85rem; }
+  .entry-card__title { font-size: .8rem; }
+  .color-picker-group { flex-direction: column; align-items: stretch; }
+  .color-picker-input { width: 100%; height: 40px; }
+}
+
+/* Fullscreen overlay mobile */
+@media (max-width: 768px) {
+  .cv-fullscreen-bar { padding: .5rem .85rem; }
+  .cv-fullscreen-title { font-size: .75rem; }
+  .cv-fullscreen-body { padding: 1rem 0; }
 }
 
 /* ===== Public CV Download Bar ===== */
