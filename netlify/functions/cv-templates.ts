@@ -26,8 +26,8 @@ const BASE = `
 *{box-sizing:border-box;margin:0;padding:0;min-width:0}
 html,body{overflow:hidden;background:#fff}
 body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.page{background:#fff;width:794px;height:auto;margin:0;overflow:hidden;word-break:break-word;overflow-wrap:break-word}
-@media print{html,body{overflow:visible}@page{margin:0;size:A4 portrait}.page{width:100%}}
+.page{background:#fff;width:794px;min-height:1123px;height:auto;margin:0;overflow:hidden;word-break:break-word;overflow-wrap:break-word}
+@media print{html,body{overflow:visible}@page{margin:0;size:A4 portrait}.page{width:100%;min-height:1123px}}
 `;
 
 function getStyles(t: CVTemplate): string {

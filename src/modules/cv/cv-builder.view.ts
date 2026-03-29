@@ -320,20 +320,16 @@ function initPreviewScale(): void {
   let manualZoom: number | null = null;
 
   function applyScale(zoom?: number): void {
-    const iframe = document.getElementById('preview-iframe') as HTMLIFrameElement;
-    const A4_H_actual = iframe ? (parseInt(iframe.style.height) || A4_H) : A4_H;
-    // Use offsetWidth to include scrollbar area, subtract padding on both sides
     const pad = 48;
     const availW = wrap!.clientWidth - pad;
     const availH = wrap!.clientHeight - pad;
-    const autoScale = Math.min(availW / A4_W, availH / A4_H_actual);
+    const autoScale = Math.min(availW / A4_W, availH / A4_H);
     const scale = Math.max(zoom ?? autoScale, 0.1);
 
     scaler.style.setProperty('--scale', String(scale));
-    // Center horizontally within the padded area
     scaler.style.marginLeft = `${(availW - A4_W * scale) / 2 + pad / 2}px`;
     scaler.style.marginTop = `${pad / 2}px`;
-    scaler.style.marginBottom = `${-(A4_H_actual * (1 - scale)) + pad / 2}px`;
+    scaler.style.marginBottom = `${-(A4_H * (1 - scale)) + pad / 2}px`;
 
     const lbl = document.getElementById('zoom-level');
     if (lbl) lbl.textContent = `${Math.round(scale * 100)}%`;
@@ -417,18 +413,16 @@ function openFullscreenPreview(): void {
   let fsManualZoom: number | null = null;
 
   function applyFsScale(zoom?: number): void {
-    const fsIframeEl = document.getElementById('fs-iframe') as HTMLIFrameElement;
-    const A4_H_actual = fsIframeEl ? (parseInt(fsIframeEl.style.height) || A4_H) : A4_H;
     const pad = 64;
     const availW = fsBody.clientWidth - pad;
     const availH = fsBody.clientHeight - pad;
-    const autoScale = Math.min(availW / A4_W, availH / A4_H_actual);
+    const autoScale = Math.min(availW / A4_W, availH / A4_H);
     const scale = Math.max(zoom ?? autoScale, 0.1);
 
     fsScaler.style.setProperty('--scale', String(scale));
     fsScaler.style.marginLeft = `${(availW - A4_W * scale) / 2 + pad / 2}px`;
     fsScaler.style.marginTop = `${pad / 2}px`;
-    fsScaler.style.marginBottom = `${-(A4_H_actual * (1 - scale)) + pad / 2}px`;
+    fsScaler.style.marginBottom = `${-(A4_H * (1 - scale)) + pad / 2}px`;
 
     const lbl = document.getElementById('fs-zoom-level');
     if (lbl) lbl.textContent = `${Math.round(scale * 100)}%`;
@@ -475,34 +469,6 @@ function schedulePreview(): void {
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
     if (!doc) return;
     doc.open(); doc.write(buildHtml(cvData, currentTemplate)); doc.close();
-    // Resize iframe to exactly fit the .page content — no grey gap
-    const resize = () => {
-      const page = doc.querySelector('.page') as HTMLElement;
-      const h = page ? page.offsetHeight : doc.documentElement.scrollHeight;
-      if (h > 0) {
-        iframe.style.height = h + 'px';
-        // Re-apply scale now that height is known
-        const scaler = document.getElementById('preview-scaler') as HTMLElement;
-        const wrap = document.getElementById('preview-wrap');
-        if (scaler && wrap) {
-          const A4_W = 794;
-          const pad = 48;
-          const availW = wrap.clientWidth - pad;
-          const availH = wrap.clientHeight - pad;
-          const scale = Math.min(availW / A4_W, availH / h);
-          const s = Math.max(scale, 0.1);
-          scaler.style.setProperty('--scale', String(s));
-          scaler.style.marginLeft = `${(availW - A4_W * s) / 2 + pad / 2}px`;
-          scaler.style.marginTop = `${pad / 2}px`;
-          scaler.style.marginBottom = `${-(h * (1 - s)) + pad / 2}px`;
-          const lbl = document.getElementById('zoom-level');
-          if (lbl) lbl.textContent = `${Math.round(s * 100)}%`;
-        }
-      }
-    };
-    // Use both rAF and load event to catch all cases
-    requestAnimationFrame(resize);
-    iframe.onload = resize;
   }, 350);
 }
 
@@ -528,7 +494,7 @@ async function saveCV(onSuccess: () => void): Promise<void> {
 // ─── Client-side HTML builder ─────────────────────────────────────────────────
 function buildHtml(d: CVBuiltData, t: CVTemplate): string {
   const gf = `<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>`;
-  const base = `*{box-sizing:border-box;margin:0;padding:0;min-width:0}html,body{overflow:hidden;background:#fff}body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;font-size:12px;word-break:break-word;overflow-wrap:break-word}.page{background:#fff;width:794px;height:auto;margin:0;overflow:hidden}`;
+  const base = `*{box-sizing:border-box;margin:0;padding:0;min-width:0}html,body{overflow:hidden;background:#fff}body{font-family:'Inter',sans-serif;line-height:1.6;color:#1e293b;font-size:12px;word-break:break-word;overflow-wrap:break-word}.page{background:#fff;width:794px;min-height:1123px;height:auto;margin:0;overflow:hidden}`;
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"/>${gf}<style>${base}${tplCSS(t)}</style></head><body><div class="page">${tplBody(d,t)}</div></body></html>`;
 }
 

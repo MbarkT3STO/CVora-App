@@ -887,13 +887,13 @@ input, textarea, select { font-family: inherit; }
   transform: scale(var(--scale, 1));
   transform-origin: top left;
   width: 794px;
-  height: auto;
+  height: 1123px;
   flex-shrink: 0;
   display: block;
 }
 .preview-iframe {
   width: 794px;
-  height: 600px; /* initial; JS resizes to content */
+  height: 1123px;
   border: none;
   border-radius: 2px;
   background: #fff;
@@ -958,7 +958,7 @@ input, textarea, select { font-family: inherit; }
   transform: scale(var(--scale, 1));
   transform-origin: top left;
   width: 794px;
-  height: auto;
+  height: 1123px;
   flex-shrink: 0;
 }
 
