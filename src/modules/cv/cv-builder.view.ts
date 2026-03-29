@@ -381,10 +381,8 @@ function openFullscreenPreview(): void {
       </div>
     </div>
     <div class="cv-fullscreen-body" id="fs-body">
-      <div class="cv-fullscreen-size-wrap" id="fs-size-wrap">
-        <div class="cv-fullscreen-scaler" id="fs-scaler">
-          <iframe id="fs-iframe" class="preview-iframe" title="CV Full Preview"></iframe>
-        </div>
+      <div class="cv-fullscreen-scaler" id="fs-scaler">
+        <iframe id="fs-iframe" class="preview-iframe" title="CV Full Preview"></iframe>
       </div>
     </div>`;
 
@@ -401,8 +399,6 @@ function openFullscreenPreview(): void {
       fsDoc.open();
       fsDoc.write(srcDoc.documentElement.outerHTML);
       fsDoc.close();
-      // Match the source iframe height
-      if (srcIframe.style.height) fsIframe.style.height = srcIframe.style.height;
     }
   }
 
@@ -412,53 +408,58 @@ function openFullscreenPreview(): void {
   const A4_H = 1123;
   let fsManualZoom: number | null = null;
 
+  // Declare ro at function scope so close() can access it
+  let ro: ResizeObserver;
+
   function applyFsScale(zoom?: number): void {
     const pad = 64;
     const availW = fsBody.clientWidth - pad;
     const availH = fsBody.clientHeight - pad;
     const autoScale = Math.min(availW / A4_W, availH / A4_H);
     const scale = Math.max(zoom ?? autoScale, 0.1);
-
     fsScaler.style.setProperty('--scale', String(scale));
     fsScaler.style.marginLeft = `${(availW - A4_W * scale) / 2 + pad / 2}px`;
     fsScaler.style.marginTop = `${pad / 2}px`;
     fsScaler.style.marginBottom = `${-(A4_H * (1 - scale)) + pad / 2}px`;
-
-    const lbl = document.getElementById('fs-zoom-level');
+    const lbl = overlay.querySelector('#fs-zoom-level') as HTMLElement;
     if (lbl) lbl.textContent = `${Math.round(scale * 100)}%`;
+  }
+
+  const close = () => {
+    if (ro) ro.disconnect();
+    overlay.classList.remove('cv-fullscreen-overlay--visible');
+    overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
+    document.removeEventListener('keydown', onKey);
+  };
+
+  function onKey(e: KeyboardEvent) {
+    if (e.key === 'Escape') close();
   }
 
   requestAnimationFrame(() => {
     applyFsScale();
-    const ro = new ResizeObserver(() => { if (!fsManualZoom) applyFsScale(); });
+    ro = new ResizeObserver(() => { if (!fsManualZoom) applyFsScale(); });
     ro.observe(fsBody);
-
-    document.getElementById('fs-zoom-in')?.addEventListener('click', () => {
-      const cur = parseFloat(fsScaler.style.getPropertyValue('--scale') || '1');
-      fsManualZoom = Math.min(+(cur + 0.15).toFixed(2), 3);
-      applyFsScale(fsManualZoom);
-    });
-    document.getElementById('fs-zoom-out')?.addEventListener('click', () => {
-      const cur = parseFloat(fsScaler.style.getPropertyValue('--scale') || '1');
-      fsManualZoom = Math.max(+(cur - 0.15).toFixed(2), 0.2);
-      applyFsScale(fsManualZoom);
-    });
-    document.getElementById('fs-zoom-fit')?.addEventListener('click', () => {
-      fsManualZoom = null;
-      applyFsScale();
-    });
   });
 
-  const close = () => {
-    ro.disconnect();
-    overlay.classList.remove('cv-fullscreen-overlay--visible');
-    overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
-  };
-  document.getElementById('fs-close')?.addEventListener('click', close);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
-  document.addEventListener('keydown', function onKey(e) {
-    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); }
+  // Wire controls — use overlay.querySelector to avoid ID conflicts with main preview
+  overlay.querySelector('#fs-close')?.addEventListener('click', close);
+  overlay.querySelector('#fs-zoom-in')?.addEventListener('click', () => {
+    const cur = parseFloat(fsScaler.style.getPropertyValue('--scale') || '1');
+    fsManualZoom = Math.min(+(cur + 0.15).toFixed(2), 3);
+    applyFsScale(fsManualZoom);
   });
+  overlay.querySelector('#fs-zoom-out')?.addEventListener('click', () => {
+    const cur = parseFloat(fsScaler.style.getPropertyValue('--scale') || '1');
+    fsManualZoom = Math.max(+(cur - 0.15).toFixed(2), 0.2);
+    applyFsScale(fsManualZoom);
+  });
+  overlay.querySelector('#fs-zoom-fit')?.addEventListener('click', () => {
+    fsManualZoom = null;
+    applyFsScale();
+  });
+
+  document.addEventListener('keydown', onKey);
 }
 
 function schedulePreview(): void {

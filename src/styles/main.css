@@ -951,9 +951,6 @@ input, textarea, select { font-family: inherit; }
   scrollbar-width: thin;
   scrollbar-color: var(--bg-tertiary) transparent;
 }
-.cv-fullscreen-size-wrap {
-  display: contents;
-}
 .cv-fullscreen-scaler {
   transform: scale(var(--scale, 1));
   transform-origin: top left;
