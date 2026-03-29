@@ -74,7 +74,9 @@ export function renderDashboard(): void {
     <div class="app-layout">
       <nav class="navbar">
         <div class="navbar__brand">
-          <i class="fa-solid fa-file-lines"></i>
+          <div class="navbar__brand-logo">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
           <span>CVora</span>
         </div>
         <div class="navbar__actions">

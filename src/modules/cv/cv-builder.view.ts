@@ -128,7 +128,12 @@ export function openCVBuilder(cv: CV | null, onSuccess: () => void): void {
 function builderShell(title: string, desc: string): string {
   return `<div class="builder-layout">
     <nav class="navbar">
-      <div class="navbar__brand"><i class="fa-solid fa-file-lines"></i><span>CVora</span></div>
+      <div class="navbar__brand">
+        <div class="navbar__brand-logo">
+          <i class="fa-solid fa-file-lines"></i>
+        </div>
+        <span>CVora</span>
+      </div>
       <div class="navbar__actions">
         <button id="builder-back" class="btn btn--ghost btn--sm"><i class="fa-solid fa-arrow-left"></i> Back</button>
         <button id="builder-save" class="btn btn--primary btn--sm"><i class="fa-solid fa-floppy-disk"></i> Save CV</button>

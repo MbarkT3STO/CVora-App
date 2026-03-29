@@ -8,8 +8,10 @@ export function renderLogin(): void {
     <div class="auth-page">
       <div class="auth-card">
         <div class="auth-card__logo">
-          <i class="fa-solid fa-file-lines"></i>
-          <span>CVora</span>
+          <div class="auth-card__logo-icon">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div class="auth-card__logo-text">CVora</div>
         </div>
 
         <div class="auth-tabs">
